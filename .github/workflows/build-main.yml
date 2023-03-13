@@ -1,0 +1,43 @@
+name: Build Main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ubuntu:
+    name: build & tests on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: add build.sh permission
+        run: chmod +x ./build.sh
+      - name: Build & Test
+        run: ./build.sh Tests
+  
+  build-windows:
+    name: build & tests on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+      - name: Build & Test
+        run: ./build.ps1 Tests
+  
+  package:
+    name: Create nuget package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: add build.sh permission
+        run: chmod +x ./build.sh
+      - name: Packages
+        run: ./build.sh Pack
+      - uses: actions/upload-artifact@v1
+        with:
+          name: packages
+          path: artifacts/packages

@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{66FC7C44-4BD5-412F-AC46-0900AEC30607}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cassowary", "src\Cassowary\Cassowary.csproj", "{DA12772A-DD05-4702-A2D7-1016A9F5961B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31F8F03A-7E78-4CC5-8CC3-00AFBF2F9606}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ACA2596E-9A03-4771-AC4B-14B411B1B2AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cassowary.Tests", "tests\Cassowary.Tests\Cassowary.Tests.csproj", "{33900048-154D-4E65-B0BD-B93D53BA01F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{15CD4537-BE23-4DB9-9751-3F008FE9E300}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15CD4537-BE23-4DB9-9751-3F008FE9E300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15CD4537-BE23-4DB9-9751-3F008FE9E300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA12772A-DD05-4702-A2D7-1016A9F5961B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA12772A-DD05-4702-A2D7-1016A9F5961B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA12772A-DD05-4702-A2D7-1016A9F5961B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA12772A-DD05-4702-A2D7-1016A9F5961B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33900048-154D-4E65-B0BD-B93D53BA01F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33900048-154D-4E65-B0BD-B93D53BA01F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33900048-154D-4E65-B0BD-B93D53BA01F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33900048-154D-4E65-B0BD-B93D53BA01F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DA12772A-DD05-4702-A2D7-1016A9F5961B} = {66FC7C44-4BD5-412F-AC46-0900AEC30607}
+		{33900048-154D-4E65-B0BD-B93D53BA01F4} = {ACA2596E-9A03-4771-AC4B-14B411B1B2AD}
+	EndGlobalSection
+EndGlobal
