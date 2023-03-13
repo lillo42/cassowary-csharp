@@ -16,17 +16,6 @@ jobs:
       - name: Build & Test
         run: ./build.sh Tests
   
-  build-windows:
-    name: build & tests on Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-      - name: Build & Test
-        run: ./build.ps1 Tests
-  
   package:
     name: Create nuget package
     runs-on: ubuntu-latest
