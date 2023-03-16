@@ -3,21 +3,14 @@ using Cassowary.Extensions;
 
 namespace Cassowary.Solver;
 
-internal class Row
+internal record Row(Dictionary<Symbol, float> Cells, float Constant)
 {
-    public Row(Dictionary<Symbol, float> cells, float constant)
-    {
-        Cells = cells;
-        Constant = constant;
-    }
-
     public Row(float constant)
         : this(new(), constant)
     {
     }
 
-    public Dictionary<Symbol, float> Cells { get; }
-    public float Constant { get; private set; }
+    public float Constant { get; private set; } = Constant;
 
     public float Add(float value)
     {
@@ -27,11 +20,16 @@ internal class Row
 
     public void Add(Symbol symbol, float coefficient)
     {
-        var existingCoefficient = Cells.GetValueOrDefault(symbol);
-        existingCoefficient += coefficient;
-
-        Cells.Remove(symbol);
-        if (!existingCoefficient.IsNearZero())
+        if (Cells.TryGetValue(symbol, out var entry))
+        {
+            entry += coefficient;
+            Cells[symbol] = entry;
+            if (entry.IsNearZero())
+            {
+                Cells.Remove(symbol);
+            }
+        }
+        else if (!coefficient.IsNearZero())
         {
             Cells.Add(symbol, coefficient);
         }
@@ -63,18 +61,18 @@ internal class Row
 
     public void SolveForSymbol(Symbol symbol)
     {
-        if (!Cells.TryGetValue(symbol, out var existenceCoefficient))
+        if (!Cells.TryGetValue(symbol, out var coeff))
         {
             throw new UnreachableException("Symbol not found in row");
         }
 
         Cells.Remove(symbol);
 
-        var coefficient = -1 / existenceCoefficient;
+        var coefficient = -1 / coeff;
         Constant *= coefficient;
         foreach (var (key, value) in Cells)
         {
-            Cells[key] *= coefficient;
+            Cells[key] = value * coefficient;
         }
     }
 
@@ -88,13 +86,12 @@ internal class Row
 
     public bool Substitute(Symbol symbol, Row row)
     {
-        if (!Cells.TryGetValue(symbol, out var coefficient))
+        if (Cells.TryGetValue(symbol, out var coefficient))
         {
-            return false;
+            Cells.Remove(symbol);
+            return Add(row, coefficient);
         }
 
-        Cells.Remove(symbol);
-        Add(row, coefficient);
-        return true;
+        return false;
     }
 }

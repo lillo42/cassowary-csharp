@@ -7,6 +7,13 @@
 public readonly record struct Constraint
 {
     private readonly ConstraintData _data;
+
+    public Constraint(Expression expression, WeightedRelation relation)
+        : this(expression, relation.Operator, relation.Strength)
+    {
+        
+    }
+    
     public Constraint(Expression expression, RelationalOperator relationalOperator, float strength)
     {
         _data = new ConstraintData(expression, strength, relationalOperator);

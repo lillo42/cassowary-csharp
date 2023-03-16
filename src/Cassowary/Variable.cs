@@ -1,4 +1,7 @@
-﻿namespace Cassowary;
+﻿using System.Collections.Immutable;
+using System.Linq.Expressions;
+
+namespace Cassowary;
 
 /// <summary>
 /// Identifies a variable for the constraint solver.
@@ -25,11 +28,80 @@ public readonly record struct Variable(ulong Size)
         return id - 1;
     }
 
-    public static Expression operator +(Variable left, float right)
-        => new(new List<Term> { new(left, 1) }, right);
+    // ADD
+    public static Expression operator +(Variable variable, float value)
+        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), value);
 
-    public static Expression operator +(Variable left, Variable right)
-        => left.Add(right);
+    public static Expression operator +(float value, Variable variable)
+        => variable + value;
 
-    public Expression Add(Variable other) => new(new List<Term> { new(this, 1), new(other, 1) }, 0);
+    public static Expression operator +(Variable variable, double value)
+        => variable + (float)value;
+
+    public static Expression operator +(double value, Variable variable)
+        => variable + (float)value;
+
+    public static Expression operator +(Variable variable, Term term)
+        => new(ImmutableArray<Term>.Empty
+            .Add(new(variable, 1))
+            .Add(term), 0);
+
+    public static Expression operator +(Variable variable, Expression expression)
+        => expression with { Terms = expression.Terms.Add(new(variable, 1)) };
+
+    public static Expression operator +(Variable variable, Variable other)
+        => new(ImmutableArray<Term>.Empty
+            .Add(new(variable, 1))
+            .Add(new(other, 1)), 0);
+
+    // Sub
+    public static Term operator -(Variable variable)
+        => new(variable, -1);
+
+    public static Expression operator -(Variable variable, float value)
+        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), -value);
+
+    public static Expression operator -(Variable variable, double value)
+        => variable - (float)value;
+
+    public static Expression operator -(float value, Variable variable)
+        => variable - value;
+
+    public static Expression operator -(double value, Variable variable)
+        => variable - (float)value;
+
+    public static Expression operator -(Variable variable, Term term)
+        => new(ImmutableArray<Term>.Empty
+            .Add(new(variable, 1))
+            .Add(-term), 0);
+
+    public static Expression operator -(Variable variable, Expression expression)
+    {
+        var negate = -expression;
+        return negate with { Terms = negate.Terms.Add(new(variable, 1)) };
+    }
+
+    // OR
+    public static PartialConstraint operator |(Variable variable, WeightedRelation relation)
+        => new(Expression.From(variable), relation);
+    
+    // Mul
+    public static Term operator *(Variable variable, float value)
+        => new(variable, value);
+    
+    public static Term operator *(Variable variable, double value)
+        => variable * (float)value;
+    
+    public static Term operator *(float value, Variable variable)
+        => variable * value;
+    
+    public static Term operator *(double value, Variable variable)
+        => variable * (float)value;
+    
+    // Div
+    public static Term operator /(Variable variable, float value)
+        => new(variable, 1 / value);
+
+    public static Term operator /(Variable variable, double value)
+        => variable / (float)value;
 }

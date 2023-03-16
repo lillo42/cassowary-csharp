@@ -42,7 +42,7 @@ public static class Strength
     /// <param name="strength">The strength.</param>
     /// <returns>The clip value.</returns>
     public static float Clip(float strength)
-        => Math.Max(Math.Min(strength, Required), 0);
+        => strength.Min(Required).Max(0);
 
     /// <summary>
     /// Create a constraint as a linear combination of <see cref="Strong"/>, <see cref="Medium"/> and <see cref="Weak"/> strengths,

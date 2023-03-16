@@ -90,7 +90,7 @@ public class Solver
         // then it represents an unsatisfiable constraint.
         if (subject.Type == SymbolType.Invalid && AllDummies(row))
         {
-            if (row.Constant.IsNearZero())
+            if (!row.Constant.IsNearZero())
             {
                 throw new ArgumentException("Unsatisfiable constraint");
             }
@@ -227,7 +227,7 @@ public class Solver
             strength);
 
         AddConstraint(cn);
-        _edits.Add(variable, new EditInfo { Tag = _cns[cn], Constraint = cn, Constant = 0, });
+        _edits.Add(variable, new EditInfo(_cns[cn], cn, 0));
     }
 
     /// <summary>
@@ -265,9 +265,8 @@ public class Solver
     /// </remarks>
     public void SuggestValue(Variable variable, float value)
     {
-        var info = _edits[variable];
-        var delta = value - info.Constant;
-        info.Constant = value;
+        var delta = value - _edits[variable].Constant;
+        var info = _edits[variable] = _edits[variable] with { Constant = value };
         var infoTagMarker = info.Tag.Marker;
         var infoTagOther = info.Tag.Other;
 
@@ -276,20 +275,13 @@ public class Solver
 
         // The nice version of the following code runs into non-lexical borrow issues.
         // Ideally the `if row...` code would be in the body of the if. Pretend that it is.
-        var infeasibleRows = _infeasibleRows;
-        if (_rows.TryGetValue(infoTagMarker, out var row))
+        if (_rows.TryGetValue(infoTagMarker, out var row) && row.Add(-delta) < 0)
         {
-            if (row.Add(-delta) < 0)
-            {
-                _infeasibleRows.Add(infoTagMarker);
-            }
+            _infeasibleRows.Add(infoTagMarker);
         }
-        else if (_rows.TryGetValue(infoTagOther, out row))
+        else if (_rows.TryGetValue(infoTagOther, out row) && row.Add(delta) < 0)
         {
-            if (row.Add(-delta) < 0)
-            {
-                _infeasibleRows.Add(infoTagOther);
-            }
+            _infeasibleRows.Add(infoTagOther);
         }
         else
         {
@@ -300,12 +292,12 @@ public class Solver
                 if (diff != 0 & symbol.Type == SymbolType.External)
                 {
                     var v = _varForSymbol[symbol];
-                    VarChanged(variable);
+                    VarChanged(v);
                 }
 
                 if (coeff != 0 && otherRow.Add(diff) < 0 && symbol.Type == SymbolType.External)
                 {
-                    infeasibleRows.Add(symbol);
+                    _infeasibleRows.Add(symbol);
                 }
             }
         }
@@ -338,7 +330,12 @@ public class Solver
         {
             if (_varData.TryGetValue(variable, out var data))
             {
-                var newValue = _rows[data.Item2].Constant;
+                var newValue = 0f;
+                if (_rows.TryGetValue(data.Item2, out var row))
+                {
+                    newValue = row.Constant;
+                }
+                
                 var oldValue = data.Item1;
                 if (oldValue != newValue)
                 {
@@ -451,6 +448,7 @@ public class Solver
             _rows.Add(entering, tmp);
         }
 
+        // Remove the artificial row from the tableau
         foreach (var (_, otherRow) in _rows)
         {
             otherRow.Remove(art);
@@ -510,8 +508,7 @@ public class Solver
     {
         while (_infeasibleRows.Count != 0)
         {
-            var leaving = _infeasibleRows[^1];
-            _infeasibleRows.RemoveAt(_infeasibleRows.Count - 1);
+            var leaving = _infeasibleRows.Pop();
             if (_rows.TryGetValue(leaving, out var row) && row.Constant < 0)
             {
                 _rows.Remove(leaving);
@@ -671,7 +668,7 @@ public class Solver
         Tag tag;
         if (constraint.Operator is RelationalOperator.GreaterThanOrEqual or RelationalOperator.LessThanOrEqual)
         {
-            var coeff = constraint.Operator == RelationalOperator.LessThanOrEqual ? 1f : -1;
+            var coeff = constraint.Operator == RelationalOperator.LessThanOrEqual ? 1f : -1f;
 
             var slack = new Symbol(_idTick, SymbolType.Slack);
             row.Add(slack, coeff);

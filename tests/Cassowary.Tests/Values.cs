@@ -1,6 +1,8 @@
-﻿namespace Cassowary.Tests;
+﻿using Xunit.Abstractions;
 
-public record Values(Dictionary<Variable, float> Variables)
+namespace Cassowary.Tests;
+
+public record Values(ITestOutputHelper Output, Dictionary<Variable, float> Variables)
 {
     private float ValueOf(Variable variable)
         => Variables.GetValueOrDefault(variable, 0);
@@ -9,17 +11,18 @@ public record Values(Dictionary<Variable, float> Variables)
     {
         foreach (var (variable, value) in changes)
         {
+            Output.WriteLine("{0} changed to {1}", variable, value);
             Variables[variable] = value;
         }
     }
-    
-    public static (Func<Variable, float>, Action<List<(Variable, float)>>) NewValues()
+
+    public static (Func<Variable, float>, Action<List<(Variable, float)>>) NewValues(ITestOutputHelper output)
     {
-        var values = new Values(new Dictionary<Variable, float>());
-        
+        var values = new Values(output, new Dictionary<Variable, float>());
+
         var valueOf = new Func<Variable, float>(values.ValueOf);
         var update = new Action<List<(Variable, float)>>(values.Update);
-        
+
         return (valueOf, update);
     }
 }

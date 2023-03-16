@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Xunit.Abstractions;
 using static Cassowary.Constraint;
 using static Cassowary.Strength;
 using static Cassowary.WeightedRelation;
@@ -7,10 +8,17 @@ namespace Cassowary.Tests;
 
 public class Removal
 {
+    private readonly ITestOutputHelper _output;
+
+    public Removal(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
     [Fact]
     public void RemoveConstraint()
     {
-        var (valueOf, update) = Values.NewValues();
+        var (valueOf, update) = Values.NewValues(_output);
 
         var solver = new Solver.Solver();
 
