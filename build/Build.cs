@@ -94,13 +94,6 @@ class Build : NukeBuild
         .Produces(TestResultDirectory / "*.xml")
         .Executes(() =>
         {
-            var testProjects = new List<Project> { Solution.GetProject("Tutu.Tests") };
-
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                testProjects.Add(Solution.GetProject("Tutu.Unix.Integration.Tests"));
-            }
-
             DotNetTest(s => s
                 .SetProjectFile(Solution)
                 .SetNoBuild(InvokedTargets.Contains(Compile))
@@ -111,33 +104,7 @@ class Build : NukeBuild
                     .EnableCollectCoverage()
                     .SetCoverletOutputFormat(CoverletOutputFormat.opencover)
                     .When(IsServerBuild, _ => _.EnableUseSourceLink()))
-                .CombineWith(testProjects, (_, v) => _
-                    .SetProjectFile(v)
-                    .SetLoggers($"trx;LogFileName={v.Name}.trx")
-                    .SetCoverletOutput(TestResultDirectory / $"{v.Name}.xml")));
-        });
-
-    Target IntegrationTests => _ => _
-        .DependsOn(Compile)
-        .Executes(() =>
-        {
-            var testProjects = new List<Project>();
-
-            var os = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows" : "Unix";
-            testProjects.Add(Solution.GetProject($"Tutu.{os}.Integration.Tests"));
-            testProjects.Add(Solution.GetProject("Tutu.Integration.Tests"));
-
-            DotNetTest(s => s
-                .SetProjectFile(Solution)
-                .SetNoBuild(InvokedTargets.Contains(Compile))
-                .SetResultsDirectory(TestResultDirectory)
-                .SetConfiguration(Configuration)
-                .EnableNoRestore()
-                .When(InvokedTargets.Contains(Coverage) || IsServerBuild, _ => _
-                    .EnableCollectCoverage()
-                    .SetCoverletOutputFormat(CoverletOutputFormat.opencover)
-                    .When(IsServerBuild, _ => _.EnableUseSourceLink()))
-                .CombineWith(testProjects, (_, v) => _
+                .CombineWith(Solution.GetProjects("*.Tests") , (_, v) => _
                     .SetProjectFile(v)
                     .SetLoggers($"trx;LogFileName={v.Name}.trx")
                     .SetCoverletOutput(TestResultDirectory / $"{v.Name}.xml")));
