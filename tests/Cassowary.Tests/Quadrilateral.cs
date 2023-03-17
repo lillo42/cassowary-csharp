@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Xunit.Abstractions;
-using static Cassowary.Constraint;
 using static Cassowary.Strength;
 using static Cassowary.WeightedRelation;
 

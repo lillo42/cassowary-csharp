@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Xunit.Abstractions;
-using static Cassowary.Constraint;
 using static Cassowary.Strength;
 using static Cassowary.WeightedRelation;
 
@@ -24,7 +23,7 @@ public class Removal
 
         var val = new Variable();
 
-        var constraint = From(val, Eq(Required), 100);
+        var constraint = val | Eq(Required) | 100;
 
         solver.AddConstraint(constraint);
         update(solver.FetchChanges());
@@ -32,7 +31,7 @@ public class Removal
         valueOf(val).Should().Be(100);
         
         solver.RemoveConstraint(constraint);
-        solver.AddConstraint(From(val, Eq(Required), 0));
+        solver.AddConstraint(val | Eq(Required) | 0);
         update(solver.FetchChanges());
         
         valueOf(val).Should().Be(0);

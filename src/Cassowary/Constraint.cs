@@ -8,12 +8,23 @@ public readonly record struct Constraint
 {
     private readonly ConstraintData _data;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Constraint"/>.
+    /// </summary>
+    /// <param name="expression">The <see cref="Cassowary.Expression"/>.</param>
+    /// <param name="relation">The <see cref="WeightedRelation"/>.</param>
     public Constraint(Expression expression, WeightedRelation relation)
         : this(expression, relation.Operator, relation.Strength)
     {
         
     }
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Constraint"/>.
+    /// </summary>
+    /// <param name="expression">The <see cref="Cassowary.Expression"/>.</param>
+    /// <param name="relationalOperator">The <see cref="RelationalOperator"/>.</param>
+    /// <param name="strength">The strength.</param>
     public Constraint(Expression expression, RelationalOperator relationalOperator, float strength)
     {
         _data = new ConstraintData(expression, strength, relationalOperator);
@@ -33,14 +44,4 @@ public readonly record struct Constraint
     /// The strength of the constraint that the solver will use.
     /// </summary>
     public float Strength => _data.Strength;
-
-
-    public static Constraint From(Expression expression, WeightedRelation relation, Variable variable) 
-        => new PartialConstraint(expression, relation).ToConstraint(variable);
-    
-    public static Constraint From(Variable variable, WeightedRelation relation, float strength) 
-        => PartialConstraint.From(variable, relation).ToConstraint(strength);
-    
-    public static Constraint From(Variable variable, WeightedRelation relation, Expression expression)
-        => PartialConstraint.From(variable, relation).ToConstraint(expression);
 }

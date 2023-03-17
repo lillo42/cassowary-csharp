@@ -31,9 +31,24 @@ namespace Cassowary;
 /// </remarks>
 public static class Strength
 {
+    /// <summary>
+    /// The required strength.
+    /// </summary>
     public const float Required = 1_001_001_000;
+
+    /// <summary>
+    /// The strong strengths.
+    /// </summary>
     public const float Strong = 1_000_000;
+
+    /// <summary>
+    /// The medium strength.
+    /// </summary>
     public const float Medium = 1_000;
+
+    /// <summary>
+    /// The weak strength.
+    /// </summary>
     public const float Weak = 1;
 
     /// <summary>
