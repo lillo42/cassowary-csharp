@@ -19,7 +19,7 @@ public class Removal
     {
         var (valueOf, update) = Values.NewValues(_output);
 
-        var solver = new Solver.Solver();
+        var solver = new Solver();
 
         var val = new Variable();
 

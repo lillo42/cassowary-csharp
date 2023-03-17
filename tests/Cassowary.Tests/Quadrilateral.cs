@@ -23,7 +23,7 @@ public class Quadrilateral
         var pointStarts = new[] { (10, 10), (10, 200), (200, 200), (200, 10) };
         var midpoints = new[] { new Point(), new Point(), new Point(), new Point() };
 
-        var solver = new Solver.Solver();
+        var solver = new Solver();
 
         var weight = 1f;
         const float multiplier = 2f;

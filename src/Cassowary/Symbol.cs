@@ -1,4 +1,4 @@
-﻿namespace Cassowary.Solver;
+﻿namespace Cassowary;
 
 internal readonly record struct Symbol(int Size, SymbolType Type)
 {

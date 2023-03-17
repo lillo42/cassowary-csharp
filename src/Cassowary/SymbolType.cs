@@ -1,4 +1,4 @@
-﻿namespace Cassowary.Solver;
+﻿namespace Cassowary;
 
 internal enum SymbolType
 {

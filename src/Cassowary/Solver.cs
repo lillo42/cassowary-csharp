@@ -1,6 +1,6 @@
 ﻿using Cassowary.Extensions;
 
-namespace Cassowary.Solver;
+namespace Cassowary;
 
 /// <summary>
 /// A constraint solver using the Cassowary algorithm. For proper usage please see the top level crate documentation.
@@ -20,6 +20,9 @@ public class Solver
     private Row? _artificial;
     private int _idTick;
 
+    /// <summary>
+    /// Initialize a new <see cref="Solver"/>.
+    /// </summary>
     public Solver()
     {
         _cns = new();
@@ -59,7 +62,6 @@ public class Solver
             AddConstraint(constraint);
         }
     }
-
 
     /// <summary>
     /// Add a <see cref="Constraint"/> to the solver.
@@ -159,7 +161,7 @@ public class Solver
             }
 
             var (leaving, row) = tmp.Value;
-            row.SolveForSymbol(leaving, tag.Marker);
+            row.SolveForSymbols(leaving, tag.Marker);
             Substitute(tag.Marker, row);
         }
 
@@ -443,7 +445,7 @@ public class Solver
                 return false;
             }
 
-            tmp.SolveForSymbol(art, entering);
+            tmp.SolveForSymbols(art, entering);
             Substitute(entering, tmp);
             _rows.Add(entering, tmp);
         }
@@ -483,7 +485,7 @@ public class Solver
             }
 
             var (symbol, row) = leaving.Value;
-            row.SolveForSymbol(symbol, entering);
+            row.SolveForSymbols(symbol, entering);
             Substitute(entering, row);
             if (entering.Type == SymbolType.External && row.Constant != 0)
             {
@@ -519,7 +521,7 @@ public class Solver
                     throw new InvalidOperationException("Objective function is unbounded");
                 }
 
-                row.SolveForSymbol(leaving, entering);
+                row.SolveForSymbols(leaving, entering);
                 Substitute(entering, row);
                 if (entering.Type == SymbolType.External && row.Constant != 0)
                 {

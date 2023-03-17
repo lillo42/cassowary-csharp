@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using Cassowary.Extensions;
+﻿using Cassowary.Extensions;
 
-namespace Cassowary.Solver;
+namespace Cassowary;
 
 internal record Row(Dictionary<Symbol, float> Cells, float Constant)
 {
@@ -61,14 +60,9 @@ internal record Row(Dictionary<Symbol, float> Cells, float Constant)
 
     public void SolveForSymbol(Symbol symbol)
     {
-        if (!Cells.TryGetValue(symbol, out var coeff))
-        {
-            throw new UnreachableException("Symbol not found in row");
-        }
-
+        var coefficient =  -1 / Cells[symbol];
         Cells.Remove(symbol);
 
-        var coefficient = -1 / coeff;
         Constant *= coefficient;
         foreach (var (key, value) in Cells)
         {
@@ -76,7 +70,7 @@ internal record Row(Dictionary<Symbol, float> Cells, float Constant)
         }
     }
 
-    public void SolveForSymbol(Symbol lhs, Symbol rhs)
+    public void SolveForSymbols(Symbol lhs, Symbol rhs)
     {
         Add(lhs, -1);
         SolveForSymbol(rhs);
