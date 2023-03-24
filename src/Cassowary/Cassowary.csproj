@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(AppTargetFramework)</TargetFramework>
+    <PackageId>Cassowary.CSharp</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
