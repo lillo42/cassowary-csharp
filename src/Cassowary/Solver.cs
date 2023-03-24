@@ -168,8 +168,7 @@ public class Solver
         // Optimizing after each constraint is removed ensures that the
         // solver remains consistent. It makes the solver api easier to
         // use at a small tradeoff for speed.
-        var objective = _objective;
-        Optimise(objective);
+        Optimise(_objective);
 
         // Check for and decrease the reference count for variables referenced by the constraint
         // If the reference count is zero remove the variable from the variable map
@@ -337,7 +336,7 @@ public class Solver
                 {
                     newValue = row.Constant;
                 }
-                
+
                 var oldValue = data.Item1;
                 if (oldValue != newValue)
                 {
@@ -419,14 +418,14 @@ public class Solver
         // Create and add the artificial variable to the tableau
         var art = new Symbol(_idTick, SymbolType.Slack);
         _idTick++;
-        _rows.Add(art, row);
-        _artificial = row;
+        _rows.Add(art, row with { Cells = new Dictionary<Symbol, float>(row.Cells) });
+        _artificial = row with { Cells = new Dictionary<Symbol, float>(row.Cells) };
 
-        var artificial = _artificial;
         // Optimize the artificial objective. This is successful
         // only if the artificial objective is optimized to zero.
-        Optimise(_objective);
-        var success = artificial.Constant.IsNearZero();
+        Optimise(_artificial);
+
+        var success = _artificial.Constant.IsNearZero();
         _artificial = null;
 
         // If the artificial variable is basic, pivot the row so that
@@ -485,6 +484,8 @@ public class Solver
             }
 
             var (symbol, row) = leaving.Value;
+
+            // pivot the entering symbol into the basis
             row.SolveForSymbols(symbol, entering);
             Substitute(entering, row);
             if (entering.Type == SymbolType.External && row.Constant != 0)
@@ -549,7 +550,7 @@ public class Solver
     private (Symbol symbol, Row row)? GetLeavingRow(Symbol entering)
     {
         var ratio = float.PositiveInfinity;
-        (Symbol, Row)? found = null;
+        Symbol? found = null;
 
         foreach (var (symbol, row) in _rows)
         {
@@ -562,7 +563,7 @@ public class Solver
                     if (tempRatio < ratio)
                     {
                         ratio = tempRatio;
-                        found = (symbol, row);
+                        found = symbol;
                     }
                 }
             }
@@ -570,10 +571,12 @@ public class Solver
 
         if (found != null)
         {
-            _rows.Remove(found.Value.Item1);
+            var row = _rows[found.Value];
+            _rows.Remove(found.Value);
+            return (found.Value, row);
         }
 
-        return found;
+        return null;
     }
 
     /// <summary>

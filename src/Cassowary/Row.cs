@@ -2,7 +2,7 @@
 
 namespace Cassowary;
 
-internal record Row(Dictionary<Symbol, float> Cells, float Constant)
+internal record Row(Dictionary<Symbol, float> Cells, float Constant) 
 {
     public Row(float constant)
         : this(new(), constant)
