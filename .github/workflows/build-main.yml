@@ -10,7 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
       - name: Build & Test
         run: |
           chmod +x ./build.sh
@@ -21,11 +28,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+
+
       - name: Packages
         run: |
           chmod +x ./build.sh
           ./build.sh Pack
+
       - uses: actions/upload-artifact@v1
         with:
           name: packages
