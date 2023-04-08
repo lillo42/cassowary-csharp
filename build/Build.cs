@@ -9,7 +9,9 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
+using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -35,28 +37,9 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
+    [GitVersion] readonly GitVersion GitVersion;
     [CI] GitHubActions GitHubActions;
 
-    string Version
-    {
-        get
-        {
-            if(GitHubActions is { Ref: not null } && GitHubActions.Ref.StartsWith("refs/tags/"))
-            {
-                return GitHubActions.Ref.Replace("refs/tags/v", "");
-            }
-            
-            if(GitRepository.Tags is { Count: > 0 })
-            {
-                var lastTag = GitRepository.Tags.Last().Split('.');
-                int.TryParse(lastTag[^1], out var lastDigit);
-                return string.Join('.', lastTag[..^1]) + (lastDigit + 1);
-            }
-
-            return "0.0.0";
-        }
-    }
-    
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath TestsDirectory => RootDirectory / "tests";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
@@ -93,17 +76,18 @@ class Build : NukeBuild
         .Executes(() =>
         {
             var branch = GitRepository.Branch;
-            if (GitHubActions.IsPullRequest)
+            if (GitHubActions is { IsPullRequest: true })
             {
                 branch = GitHubActions.HeadRef.Replace("refs/heads/", "");
             }
+
             DotNetBuild(s => s
                 .SetNoRestore(InvokedTargets.Contains(Restore))
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .SetAssemblyVersion(Version)
-                .SetFileVersion(Version)
-                .SetInformationalVersion(Version + ".Branch." + branch + ".Sha." + GitRepository.Head));
+                .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                .SetFileVersion(GitVersion.AssemblySemFileVer)
+                .SetInformationalVersion(GitVersion.InformationalVersion));
         });
 
     Target Coverage => _ => _
@@ -126,7 +110,7 @@ class Build : NukeBuild
                     .EnableCollectCoverage()
                     .SetCoverletOutputFormat(CoverletOutputFormat.opencover)
                     .When(IsServerBuild, _ => _.EnableUseSourceLink()))
-                .CombineWith(Solution.GetProjects("*.Tests") , (_, v) => _
+                .CombineWith(Solution.GetProjects("*.Tests"), (_, v) => _
                     .SetProjectFile(v)
                     .SetLoggers($"trx;LogFileName={v.Name}.trx")
                     .SetCoverletOutput(TestResultDirectory / $"{v.Name}.xml")));
@@ -138,12 +122,19 @@ class Build : NukeBuild
         .Produces(PackageDirectory / "*.snupkg")
         .Executes(() =>
         {
+            var version = GitVersion.NuGetVersionV2;
+            if(GitHubActions != null && GitHubActions.Ref.StartsWith("refs/tags/"))
+            {
+                Log.Debug("NugetV2: {Version}", version);
+                version = GitHubActions.Ref.Replace("refs/tags/v", "");
+            }
+            
             DotNetPack(s => s
                 .SetProject(Solution)
                 .SetNoBuild(InvokedTargets.Contains(Compile))
                 .SetConfiguration(Configuration)
                 .SetOutputDirectory(PackageDirectory)
-                .SetVersion(Version)
+                .SetVersion(version)
                 .EnableIncludeSource()
                 .EnableIncludeSymbols()
                 .EnableNoRestore());
@@ -156,7 +147,7 @@ class Build : NukeBuild
         .Requires(() => Configuration.Equals(Configuration.Release))
         .Executes(() =>
         {
-           DotNetNuGetPush(s => s
+            DotNetNuGetPush(s => s
                 .SetSource(NugetSource)
                 .SetApiKey(NugetApiKey)
                 .EnableSkipDuplicate()
