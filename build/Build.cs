@@ -1,3 +1,4 @@
+using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
@@ -35,9 +36,28 @@ class Build : NukeBuild
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
-    [GitVersion(NoFetch = true)] readonly GitVersion GitVersion;
     [CI] GitHubActions GitHubActions;
 
+    string Version
+    {
+        get
+        {
+            if(GitHubActions is { Ref: not null } && GitHubActions.Ref.StartsWith("refs/tags/"))
+            {
+                return GitHubActions.Ref.Replace("refs/tags/v", "");
+            }
+            
+            if(GitRepository.Tags is { Count: > 0 })
+            {
+                var lastTag = GitRepository.Tags.Last().Split('.');
+                int.TryParse(lastTag[^1], out var lastDigit);
+                return string.Join('.', lastTag[..^1]) + (lastDigit + 1);
+            }
+
+            return "0.0.0";
+        }
+    }
+    
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath TestsDirectory => RootDirectory / "tests";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
@@ -73,13 +93,18 @@ class Build : NukeBuild
         .DependsOn(Clean)
         .Executes(() =>
         {
+            var branch = GitRepository.Branch;
+            if (GitHubActions.IsPullRequest)
+            {
+                branch = GitHubActions.HeadRef.Replace("refs/heads/", "");
+            }
             DotNetBuild(s => s
                 .SetNoRestore(InvokedTargets.Contains(Restore))
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .SetAssemblyVersion(GitVersion.AssemblySemVer)
-                .SetFileVersion(GitVersion.AssemblySemFileVer)
-                .SetInformationalVersion(GitVersion.InformationalVersion));
+                .SetAssemblyVersion(Version)
+                .SetFileVersion(Version)
+                .SetInformationalVersion(Version + ".Branch." + branch + ".Sha." + GitRepository.Head));
         });
 
     Target Coverage => _ => _
@@ -119,7 +144,7 @@ class Build : NukeBuild
                 .SetNoBuild(InvokedTargets.Contains(Compile))
                 .SetConfiguration(Configuration)
                 .SetOutputDirectory(PackageDirectory)
-                .SetVersion(GitVersion.NuGetVersionV2)
+                .SetVersion(Version)
                 .EnableIncludeSource()
                 .EnableIncludeSymbols()
                 .EnableNoRestore());
