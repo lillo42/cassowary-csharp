@@ -42,7 +42,7 @@ class Build : NukeBuild
     {
         get
         {
-            if(GitHubActions != null && GitHubActions.Ref != null && GitHubActions.Ref.StartsWith("refs/tags/"))
+            if(GitHubActions is { Ref: not null } && GitHubActions.Ref.StartsWith("refs/tags/"))
             {
                 return GitHubActions.Ref.Replace("refs/tags/v", "");
             }
@@ -93,13 +93,18 @@ class Build : NukeBuild
         .DependsOn(Clean)
         .Executes(() =>
         {
+            var branch = GitRepository.Branch;
+            if (GitHubActions.IsPullRequest)
+            {
+                branch = GitHubActions.Ref.Replace("refs/heads/", "");
+            }
             DotNetBuild(s => s
                 .SetNoRestore(InvokedTargets.Contains(Restore))
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .SetAssemblyVersion(Version)
                 .SetFileVersion(Version)
-                .SetInformationalVersion(Version + ".Branch." + GitRepository.Branch + ".Sha." + GitRepository.Head));
+                .SetInformationalVersion(Version + ".Branch." + branch + ".Sha." + GitRepository.Head));
         });
 
     Target Coverage => _ => _
