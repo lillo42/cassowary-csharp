@@ -11,10 +11,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: add build.sh permission
-        run: chmod +x ./build.sh
       - name: Build & Test
-        run: ./build.sh Tests
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Tests
   
   package:
     name: Create nuget package
@@ -22,10 +22,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: add build.sh permission
-        run: chmod +x ./build.sh
       - name: Packages
-        run: ./build.sh Pack
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Pack
       - uses: actions/upload-artifact@v1
         with:
           name: packages

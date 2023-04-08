@@ -1,8 +1,0 @@
-mode: ContinuousDelivery
-tag-prefix: '[vV]'
-
-# use an environment variable or raise an error if not available
-assembly-versioning-scheme: MajorMinorPatch
-assembly-file-versioning-scheme: MajorMinorPatch
-assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{env:BUILD_NUMBER ?? 0}'
-assembly-informational-format: '{InformationalVersion}'

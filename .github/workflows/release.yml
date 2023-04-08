@@ -12,11 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
 
-      - name: add build.sh permission
-        run: chmod +x ./build.sh
-
       - name: Pack & Publish
-        run: ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
 
       - uses: actions/upload-artifact@v1
         with:
