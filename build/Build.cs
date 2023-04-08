@@ -96,7 +96,7 @@ class Build : NukeBuild
             var branch = GitRepository.Branch;
             if (GitHubActions.IsPullRequest)
             {
-                branch = GitHubActions.Ref.Replace("refs/heads/", "");
+                branch = GitHubActions.HeadRef.Replace("refs/heads/", "");
             }
             DotNetBuild(s => s
                 .SetNoRestore(InvokedTargets.Contains(Restore))
