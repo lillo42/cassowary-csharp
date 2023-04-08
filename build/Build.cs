@@ -137,15 +137,7 @@ class Build : NukeBuild
                 .SetApiKey(NugetApiKey)
                 .EnableSkipDuplicate()
                 .CombineWith(
-                    PackageDirectory.GlobFiles("*.nupkg"),
-                    (_, v) => _.SetTargetPath(v)));
-            
-            DotNetNuGetPush(s => s
-                .SetSource(NugetSource)
-                .SetApiKey(NugetApiKey)
-                .EnableSkipDuplicate()
-                .CombineWith(
-                    PackageDirectory.GlobFiles("*.snupkg"),
+                    PackageDirectory.GlobFiles("*.nupkg", "*.snupkg"),
                     (_, v) => _.SetTargetPath(v)));
         });
 }
