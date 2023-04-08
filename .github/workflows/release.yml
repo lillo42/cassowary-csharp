@@ -1,7 +1,8 @@
 name: Release
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - v*
 
 jobs:
   publish:
@@ -10,11 +11,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
+
       - name: add build.sh permission
         run: chmod +x ./build.sh
+
       - name: Pack & Publish
         run: ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
+
       - uses: actions/upload-artifact@v1
         with:
           name: packages
           path: artifacts/packages
+
+      - name: Upload Release Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ github.ref }} artifacts/packages/*.nupkg
+          gh release upload ${{ github.ref }} artifacts/packages/*.snupkg
