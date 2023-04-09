@@ -106,7 +106,7 @@ class Build : NukeBuild
                 .CombineWith(Solution.GetProjects("*.Tests"), (_, v) => _
                     .SetProjectFile(v)
                     .SetLoggers($"trx;LogFileName={v.Name}.trx")
-                    .SetCoverletOutput(TestResultDirectory / $"{v.Name}.xml")));
+                    .SetCoverletOutput(CoverageReportDirectory / $"{v.Name}.xml")));
         });
 
     Target Pack => _ => _
@@ -115,19 +115,12 @@ class Build : NukeBuild
         .Produces(PackageDirectory / "*.snupkg")
         .Executes(() =>
         {
-            if (GitHubActions != null)
-            {
-                Log.Logger.Debug("Nuget version: {NugetVersion}", GitVersion.NuGetVersionV2);
-            }
-
-            Log.Logger.Debug("GitVersion: {@GitVersion}", GitVersion);
-
             DotNetPack(s => s
                 .SetProject(Solution)
                 .SetNoBuild(InvokedTargets.Contains(Compile))
                 .SetConfiguration(Configuration)
                 .SetOutputDirectory(PackageDirectory)
-                .SetVersion(GitVersion.AssemblySemVer)
+                .SetVersion(GitVersion.NuGetVersionV2)
                 .EnableIncludeSource()
                 .EnableIncludeSymbols()
                 .EnableNoRestore());

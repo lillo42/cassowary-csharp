@@ -21,13 +21,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0
 
       - name: Pack & Publish
         run: |
           chmod +x ./build.sh
-          ./build.sh Pack --api-key ${{secrets.NUGET_TOKEN}}
+          ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
 
       - uses: actions/upload-artifact@v3
         with:

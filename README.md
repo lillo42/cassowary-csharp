@@ -1,6 +1,6 @@
 # cassowary-csharp
 
-[![Build Status](https://travis-ci.org/dylanede/cassowary-rs.svg?branch=master)](https://travis-ci.org/dylanede/cassowary-rs)
+![Build Status](https://github.com/lillo42/cassowary-csharp/actions/workflows/build-main.yml/badge.svg)
 
 This is a C# implementation of the Cassowary constraint solving algorithm
 ([Badros et. al 2001](https://constraints.cs.washington.edu/solvers/cassowary-tochi.pdf)).
@@ -22,32 +22,15 @@ intrinsic knowledge of common user interface conventions like rectangular
 regions or even two dimensions. These abstractions belong in a higher level
 crate.
 
-For more information, please read
-**[the documentation](https://dylanede.github.io/cassowary-rs)**.
-
 ## Getting Started
 
-Add the following to your Cargo.toml:
+Add the following to your csproj file:
+
 
 ```bash
 dotnet add package cassowary-csharp
 ```
 
-Please read the documentation (linked above) for how to best use this crate.
-
 ## License
 
-Licensed under either of
-
-* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
-  http://www.apache.org/licenses/LICENSE-2.0)
-* MIT license ([LICENSE-MIT](LICENSE-MIT) or
-  http://opensource.org/licenses/MIT)
-
-at your option.
-
-### Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
-dual licensed as above, without any additional terms or conditions.
+Cassowary is licensed under the [MIT](LICENSE) license.
