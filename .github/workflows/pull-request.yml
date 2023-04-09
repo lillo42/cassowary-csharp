@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
+      - name: add build.sh permission
+        run: chmod +x ./build.sh
       - name: Build & Test
-        run: |
-          chmod +x ./build.sh
-          ./build.sh Tests
+        run: ./build.sh Tests
