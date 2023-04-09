@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0
+
       - name: Build & Test
         run: |
           chmod +x ./build.sh
@@ -21,11 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+
       - name: Packages
         run: |
           chmod +x ./build.sh
           ./build.sh Pack
+
       - uses: actions/upload-artifact@v1
         with:
           name: packages

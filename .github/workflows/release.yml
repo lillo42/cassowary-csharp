@@ -1,8 +1,7 @@
 name: Release
 on:
-  push:
-    tags:
-      - v*
+  release:
+    types: [ created ]
 
 jobs:
   publish:
@@ -10,21 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0
 
       - name: Pack & Publish
         run: |
           chmod +x ./build.sh
-          ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
+          ./build.sh Pack --api-key ${{secrets.NUGET_TOKEN}}
 
       - uses: actions/upload-artifact@v1
         with:
           name: packages
           path: artifacts/packages
-
-      - name: Upload Release Asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ github.ref_name }} artifacts/packages/*.nupkg
-          gh release upload ${{ github.ref_name }} artifacts/packages/*.snupkg
