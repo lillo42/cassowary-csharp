@@ -10,6 +10,7 @@ using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
+using Serilog;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -114,12 +115,20 @@ class Build : NukeBuild
         .Produces(PackageDirectory / "*.snupkg")
         .Executes(() =>
         {
+            if (GitHubActions != null)
+            {
+                Log.Logger.Debug("Nuget version: {NugetVersion}", GitVersion.NuGetVersionV2);
+            }
+            
+            
+            Log.Logger.Debug("GitVersion: {@GitVersion}", GitVersion);
+            
             DotNetPack(s => s
                 .SetProject(Solution)
                 .SetNoBuild(InvokedTargets.Contains(Compile))
                 .SetConfiguration(Configuration)
                 .SetOutputDirectory(PackageDirectory)
-                .SetVersion(GitVersion.NuGetVersionV2)
+                .SetVersion(GitVersion.AssemblySemVer)
                 .EnableIncludeSource()
                 .EnableIncludeSymbols()
                 .EnableNoRestore());
@@ -137,15 +146,7 @@ class Build : NukeBuild
                 .SetApiKey(NugetApiKey)
                 .EnableSkipDuplicate()
                 .CombineWith(
-                    PackageDirectory.GlobFiles("*.nupkg"),
-                    (_, v) => _.SetTargetPath(v)));
-            
-            DotNetNuGetPush(s => s
-                .SetSource(NugetSource)
-                .SetApiKey(NugetApiKey)
-                .EnableSkipDuplicate()
-                .CombineWith(
-                    PackageDirectory.GlobFiles("*.snupkg"),
+                    PackageDirectory.GlobFiles("*.nupkg", "*.snupkg"),
                     (_, v) => _.SetTargetPath(v)));
         });
 }
