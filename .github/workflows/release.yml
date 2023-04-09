@@ -3,6 +3,16 @@ on:
   release:
     types: [ created ]
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_MULTILEVEL_LOOKUP: 0
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+  FORCE_COLOR: 3
+  TERM: xterm
+
 jobs:
   publish:
     name: publish
@@ -19,7 +29,7 @@ jobs:
           chmod +x ./build.sh
           ./build.sh Pack --api-key ${{secrets.NUGET_TOKEN}}
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: artifacts/packages
