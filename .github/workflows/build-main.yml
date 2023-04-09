@@ -4,6 +4,16 @@ on:
     branches:
       - main
 
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_MULTILEVEL_LOOKUP: 0
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+  FORCE_COLOR: 3
+  TERM: xterm
+
 jobs:
   build-ubuntu:
     name: build & tests on Ubuntu
@@ -12,27 +22,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0
 
       - name: Build & Test
         run: |
           chmod +x ./build.sh
-          ./build.sh Tests
-  
-  package:
-    name: Create nuget package
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+          ./build.sh Tests Pack
 
-      - name: Packages
-        run: |
-          chmod +x ./build.sh
-          ./build.sh Pack
-
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: artifacts/packages
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: artifacts/test-results
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: artifacts/coverage-report
