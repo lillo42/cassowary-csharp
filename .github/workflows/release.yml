@@ -17,7 +17,7 @@ jobs:
       - name: Pack & Publish
         run: |
           chmod +x ./build.sh
-          ./build.sh Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
+          ./build.sh Pack --api-key ${{secrets.NUGET_TOKEN}}
 
       - uses: actions/upload-artifact@v1
         with:

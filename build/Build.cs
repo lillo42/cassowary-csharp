@@ -103,7 +103,7 @@ class Build : NukeBuild
                     .EnableCollectCoverage()
                     .SetCoverletOutputFormat(CoverletOutputFormat.opencover)
                     .When(IsServerBuild, _ => _.EnableUseSourceLink()))
-                .CombineWith(Solution.GetProjects("*.Tests") , (_, v) => _
+                .CombineWith(Solution.GetProjects("*.Tests"), (_, v) => _
                     .SetProjectFile(v)
                     .SetLoggers($"trx;LogFileName={v.Name}.trx")
                     .SetCoverletOutput(TestResultDirectory / $"{v.Name}.xml")));
@@ -119,10 +119,9 @@ class Build : NukeBuild
             {
                 Log.Logger.Debug("Nuget version: {NugetVersion}", GitVersion.NuGetVersionV2);
             }
-            
-            
+
             Log.Logger.Debug("GitVersion: {@GitVersion}", GitVersion);
-            
+
             DotNetPack(s => s
                 .SetProject(Solution)
                 .SetNoBuild(InvokedTargets.Contains(Compile))
@@ -141,7 +140,7 @@ class Build : NukeBuild
         .Requires(() => Configuration.Equals(Configuration.Release))
         .Executes(() =>
         {
-           DotNetNuGetPush(s => s
+            DotNetNuGetPush(s => s
                 .SetSource(NugetSource)
                 .SetApiKey(NugetApiKey)
                 .EnableSkipDuplicate()
