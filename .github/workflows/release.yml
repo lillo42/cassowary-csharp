@@ -1,7 +1,7 @@
 name: Release
 on:
-  release:
-    types: [ created ]
+  push:
+    tags: [ v* ]
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
