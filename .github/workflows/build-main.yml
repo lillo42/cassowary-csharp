@@ -16,7 +16,7 @@ env:
 
 jobs:
   build-ubuntu:
-    name: build & tests on Ubuntu
+    name: build, tests & publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,10 +24,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build & Test
+      - name: Build, Test & Publish
         run: |
           chmod +x ./build.sh
-          ./build.sh Tests Pack
+          ./build.sh Tests Pack Publish --api-key ${{secrets.NUGET_TOKEN}}
 
       - uses: actions/upload-artifact@v3
         with:

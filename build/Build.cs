@@ -8,8 +8,10 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitReleaseManager;
 using Nuke.Common.Tools.GitVersion;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.GitReleaseManager.GitReleaseManagerTasks;
 
 [DotNetVerbosityMapping]
 [UnsetVisualStudioEnvironmentVariables]
@@ -137,5 +139,20 @@ class Build : NukeBuild
                 .CombineWith(
                     PackageDirectory.GlobFiles("*.nupkg", "*.snupkg"),
                     (_, v) => _.SetTargetPath(v)));
+        });
+
+    Target CreateRelease => _ => _
+        .Before(Publish)
+        .Requires(() => GitHubActions)
+        .Executes(() =>
+        {
+            GitReleaseManagerCreate(release => release
+                .SetToken(GitHubActions.Token)
+                .SetRepositoryName(GitHubActions.Repository)
+                .SetRepositoryOwner(GitHubActions.RepositoryOwner)
+                .SetName(GitVersion.AssemblySemVer)
+                .SetTargetCommitish(GitHubActions.Sha)
+                .AddAssetPaths(PackageDirectory)
+            );
         });
 }
