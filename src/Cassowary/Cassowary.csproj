@@ -7,17 +7,12 @@
     <IsPackable>true</IsPackable>
     <PackageTags>cassowary cassowary-algorithm constraint-solver linear-programming layout csharp</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseUrl>https://github.com/lillo42/cassowary-csharp/blob/main/LICENSE</PackageLicenseUrl>
-    <PackageIcon>icon.png</PackageIcon>
     <Title>Cassowary</Title>
-    <Authors>Rafael Lillo</Authors>
     <Description>Implementation of the Cassowary algorithm in C#</Description>
-    <PackageProjectUrl>https://github.com/lillo42/cassowary-csharp</PackageProjectUrl>
   </PropertyGroup>
   
   <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackPath="\" />
-    <None Include="../../icon.png" Pack="true" PackPath="\" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>

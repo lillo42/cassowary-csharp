@@ -7,12 +7,22 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
+    <Authors>Rafael Lillo</Authors>
+    <PackageIcon>icon.png</PackageIcon>
+
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageProjectUrl>https://github.com/lillo42/cassowary-csharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lillo42/cassowary-csharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/"/>
+  </ItemGroup>
 
 </Project>
