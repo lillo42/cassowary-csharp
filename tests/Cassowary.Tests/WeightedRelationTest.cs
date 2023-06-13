@@ -10,7 +10,7 @@ public class WeightedRelationTest
     [Fact]
     public void Eq()
     {
-        var strength = _fixture.Create<float>();
+        var strength = _fixture.Create<double>();
         var relation = WeightedRelation.Eq(strength);
         relation.Operator.Should().Be(RelationalOperator.Equal);
         relation.Strength.Should().Be(strength);
@@ -19,7 +19,7 @@ public class WeightedRelationTest
     [Fact]
     public void LessOrEq()
     {
-        var strength = _fixture.Create<float>();
+        var strength = _fixture.Create<double>();
         var relation = WeightedRelation.LessOrEq(strength);
         relation.Operator.Should().Be(RelationalOperator.LessThanOrEqual);
         relation.Strength.Should().Be(strength);
@@ -28,7 +28,7 @@ public class WeightedRelationTest
     [Fact]
     public void GreaterOrEq()
     {
-        var strength = _fixture.Create<float>();
+        var strength = _fixture.Create<double>();
         var relation = WeightedRelation.GreaterOrEq(strength);
         relation.Operator.Should().Be(RelationalOperator.GreaterThanOrEqual);
         relation.Strength.Should().Be(strength);
@@ -38,13 +38,13 @@ public class WeightedRelationTest
     public void Or()
     {
         var relation = _fixture.Create<WeightedRelation>();
-        var strength = _fixture.Create<float>();
+        var strength = _fixture.Create<double>();
         
         var partialConstraint = strength | relation;
         partialConstraint.Expression.Should().Be(Expression.From(strength));
         partialConstraint.Relation.Should().Be(relation);
         
-        partialConstraint = (double)strength | relation;
+        partialConstraint = (float)strength | relation;
         partialConstraint.Expression.Should().Be(Expression.From(strength));
         partialConstraint.Relation.Should().Be(relation);
     }

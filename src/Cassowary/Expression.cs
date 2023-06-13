@@ -7,14 +7,14 @@ namespace Cassowary;
 /// An expression that can be the left hand or right hand side of a constraint equation.
 /// It is a linear combination of variables, i.e. a sum of variables weighted by coefficients, plus an optional constant.
 /// </summary>
-public readonly record struct Expression(ImmutableArray<Term> Terms, float Constant)
+public readonly record struct Expression(ImmutableArray<Term> Terms, double Constant)
 {
     /// <summary>
     /// Constructs an expression of the form _n_, where n is a constant real number, not a variable.
     /// </summary>
     /// <param name="constant">The constant value.</param>
     /// <returns>New instance of <see cref="Expression"/>.</returns>
-    public static Expression From(float constant) => new(ImmutableArray<Term>.Empty, constant);
+    public static Expression From(double constant) => new(ImmutableArray<Term>.Empty, constant);
 
     /// <summary>
     /// Constructs an expression from a single term. Forms an expression of the form _n x_
@@ -40,7 +40,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sum.</returns>
     public static Expression operator +(Expression expression, float value)
-        => expression with { Constant = expression.Constant + value };
+        => expression + (double)value;
 
     /// <summary>
     /// Sum <see cref="Expression"/> with a <see cref="float"/> value.
@@ -49,7 +49,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sum.</returns>
     public static Expression operator +(Expression expression, double value)
-        => expression + (float)value;
+        => expression with { Constant = expression.Constant + value };
 
     /// <summary>
     /// Sum <see cref="Expression"/> with a <see cref="float"/> value.
@@ -58,7 +58,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sum.</returns>
     public static Expression operator +(float value, Expression expression)
-        => expression + value;
+        => expression + (double)value;
 
     /// <summary>
     /// Sum <see cref="Expression"/> with a <see cref="float"/> value.
@@ -67,7 +67,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sum.</returns>
     public static Expression operator +(double value, Expression expression)
-        => expression + (float)value;
+        => expression + value;
 
     /// <summary>
     /// Sum two <see cref="Expression"/>.
@@ -97,7 +97,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The <see cref="float"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sub.</returns>
     public static Expression operator -(Expression expression, float value)
-        => expression with { Constant = expression.Constant - value };
+        => expression - (double)value;
 
     /// <summary>
     /// Subtract <see cref="float"/> value from <see cref="Expression"/>.
@@ -106,7 +106,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The <see cref="float"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sub.</returns>
     public static Expression operator -(Expression expression, double value)
-        => expression - (float)value;
+        => expression with { Constant = expression.Constant - value };
 
     /// <summary>
     /// Subtract <see cref="float"/> value from <see cref="Expression"/>.
@@ -115,10 +115,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The <see cref="float"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sub.</returns>
     public static Expression operator -(float value, Expression expression)
-    {
-        var negate = -expression;
-        return negate with { Constant = negate.Constant + value };
-    }
+        => (double)value - expression;
 
     /// <summary>
     /// Subtract <see cref="float"/> value from <see cref="Expression"/>.
@@ -127,7 +124,10 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The <see cref="float"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with a constant sub.</returns>
     public static Expression operator -(double value, Expression expression)
-        => (float)value - expression;
+    {
+        var negate = -expression;
+        return negate with { Constant = negate.Constant + value };
+    }
 
     /// <summary>
     /// Subtract <see cref="Term"/> from <see cref="Expression"/>.
@@ -183,8 +183,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(Expression expression, float value)
-        => new(expression.Terms.ToImmutableArray(x => x * value),
-            expression.Constant * value);
+        => expression * (double)value;
 
     /// <summary>
     /// Multiply <see cref="Expression"/> by <see cref="float"/> value.
@@ -193,7 +192,8 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(Expression expression, double value)
-        => expression * (float)value;
+         => new(expression.Terms.ToImmutableArray(x => x * value),
+            expression.Constant * value);
 
     /// <summary>
     /// Multiply <see cref="Expression"/> by <see cref="float"/> value.
@@ -202,7 +202,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(float value, Expression expression)
-        => expression * value;
+     => expression * (double)value;
 
     /// <summary>
     /// Multiply <see cref="Expression"/> by <see cref="float"/> value.
@@ -211,7 +211,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(double value, Expression expression)
-        => expression * (float)value;
+        => expression * value;
 
     #endregion
 
@@ -223,8 +223,8 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="expression">The <see cref="Expression"/>.</param>
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> dividing by <paramref name="value"/>.</returns>
-    public static Expression operator /(Expression expression, float value)
-        => new(expression.Terms.ToImmutableArray(term => term / value), expression.Constant / value);
+    public static Expression operator /(Expression expression, float value) 
+        => expression / (double)value;
 
     /// <summary>
     /// Divide <see cref="Expression"/> by <see cref="float"/> value.
@@ -233,7 +233,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, float Const
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> dividing by <paramref name="value"/>.</returns>
     public static Expression operator /(Expression expression, double value)
-        => expression / (float)value;
+        => new(expression.Terms.ToImmutableArray(term => term / value), expression.Constant / value);
 
     #endregion
 }

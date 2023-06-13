@@ -12,7 +12,7 @@ public class ExpressionTest
     [Fact]
     public void FromConstant()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var expression = Expression.From(constant);
 
         expression.Constant.Should().Be(constant);
@@ -22,7 +22,7 @@ public class ExpressionTest
     [Fact]
     public void FromTerm()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
         var expression = Expression.From(term);
 
         expression.Constant.Should().Be(0);
@@ -44,10 +44,10 @@ public class ExpressionTest
     [Fact]
     public void SumExpressionWithValue()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var expression = Expression.From(constant);
 
-        constant = _fixture.Create<float>();
+        constant = _fixture.Create<double>();
 
         var sum = expression + constant;
         sum.Constant.Should().Be(expression.Constant + constant);
@@ -56,20 +56,20 @@ public class ExpressionTest
         sum.Constant.Should().Be(expression.Constant + constant);
 
 
-        sum = expression + (double)constant;
+        sum = expression + (float)constant;
         sum.Constant.Should().Be(expression.Constant + constant);
 
-        sum = (double)constant + expression;
+        sum = (float)constant + expression;
         sum.Constant.Should().Be(expression.Constant + constant);
     }
 
     [Fact]
     public void SumExpressionWithExpression()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var expression = Expression.From(constant);
 
-        var otherConstant = _fixture.Create<float>();
+        var otherConstant = _fixture.Create<double>();
         var otherExpression = Expression.From(otherConstant);
 
         var sum = expression + otherExpression;
@@ -80,7 +80,7 @@ public class ExpressionTest
     [Fact]
     public void NegateExpression()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var expression = Expression.From(constant);
 
         var negated = -expression;
@@ -91,7 +91,7 @@ public class ExpressionTest
     [Fact]
     public void SubExpressionWithValue()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var expression = Expression.From(constant);
 
         constant = _fixture.Create<float>();
@@ -99,23 +99,23 @@ public class ExpressionTest
         var sub = expression - constant;
         sub.Constant.Should().Be(expression.Constant - constant);
 
-        sub = expression - (double)constant;
+        sub = expression - (float)constant;
         sub.Constant.Should().Be(expression.Constant - constant);
 
         var negate = -expression;
         sub = constant - expression;
         sub.Constant.Should().Be(negate.Constant + constant);
 
-        sub = (double)constant - expression;
+        sub = (float)constant - expression;
         sub.Constant.Should().Be(negate.Constant + constant);
     }
 
     [Fact]
     public void SubExpressionWithTerm()
     {
-        var expression = Expression.From(_fixture.Create<float>());
+        var expression = Expression.From(_fixture.Create<double>());
 
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
 
         var sub = expression - term;
         sub.Terms.Should().HaveCount(1);
@@ -125,7 +125,7 @@ public class ExpressionTest
     [Fact]
     public void SubExpressionWithVariable()
     {
-        var expression = Expression.From(_fixture.Create<float>());
+        var expression = Expression.From(_fixture.Create<double>());
 
         var variable = new Variable();
 
@@ -138,10 +138,10 @@ public class ExpressionTest
     public void SubExpressionWithExpression()
     {
         var expression = new Expression(ImmutableArray<Term>.Empty
-            .Add(new Term(new Variable(), 1)), _fixture.Create<float>());
+            .Add(new Term(new Variable(), 1)), _fixture.Create<double>());
 
         var otherExpression = new Expression(ImmutableArray<Term>.Empty
-            .Add(new Term(new Variable(), 2)), _fixture.Create<float>());
+            .Add(new Term(new Variable(), 2)), _fixture.Create<double>());
 
 
         var sub = expression - otherExpression;
@@ -153,7 +153,7 @@ public class ExpressionTest
     [Fact]
     public void Or()
     {
-        var expression = Expression.From(_fixture.Create<float>());
+        var expression = Expression.From(_fixture.Create<double>());
         var relation = _fixture.Create<WeightedRelation>();
 
         var partial = expression | relation;
@@ -165,15 +165,15 @@ public class ExpressionTest
     public void Multiply()
     {
         var expression = new Expression(ImmutableArray<Term>.Empty
-            .Add(new(new Variable(), 2)), _fixture.Create<float>());
+            .Add(new(new Variable(), 2)), _fixture.Create<double>());
 
-        var multiplier = _fixture.Create<float>();
+        var multiplier = _fixture.Create<double>();
 
         var product = expression * multiplier;
         product.Constant.Should().Be(expression.Constant * multiplier);
         product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
 
-        product = expression * (double)multiplier;
+        product = expression * (float)multiplier;
         product.Constant.Should().Be(expression.Constant * multiplier);
         product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
 
@@ -181,7 +181,7 @@ public class ExpressionTest
         product.Constant.Should().Be(expression.Constant * multiplier);
         product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
 
-        product = (double)multiplier * expression;
+        product = (float)multiplier * expression;
         product.Constant.Should().Be(expression.Constant * multiplier);
         product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
     }
@@ -190,9 +190,9 @@ public class ExpressionTest
     public void Div()
     {
         var expression = new Expression(ImmutableArray<Term>.Empty
-            .Add(new(new Variable(), 2)), _fixture.Create<float>());
+            .Add(new(new Variable(), 2)), _fixture.Create<double>());
 
-        var divider = _fixture.Create<float>();
+        var divider = _fixture.Create<double>();
 
         var remaning = expression / divider;
         remaning.Constant.Should().Be(expression.Constant / divider);

@@ -8,23 +8,15 @@ namespace Cassowary;
 /// a copy of the same variable.
 /// </summary>
 /// <param name="Id">The variable id.</param>
-public readonly record struct Variable(ulong Id)
+public readonly record struct Variable(Guid Id)
 {
-    private static ulong s_nextId = 0;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Variable"/> struct.
     /// </summary>
     /// <returns>New instance <see cref="Variable"/>.</returns>
     public Variable()
-        : this(CreateNextId())
+        : this(Guid.NewGuid())
     {
-    }
-
-    private static ulong CreateNextId()
-    {
-        var id = Interlocked.Increment(ref s_nextId);
-        return id - 1;
     }
 
     #region operator +
@@ -36,8 +28,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> value <paramref name="value"/> as <see cref="Expression.Constant"/>.</returns>
     public static Expression operator +(Variable variable, float value)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), value);
-
+        => variable + (double)value;
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="variable"/> and return new <see cref="Expression"/>.
     /// </summary>
@@ -54,7 +45,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> value <paramref name="value"/> as <see cref="Expression.Constant"/>.</returns>
     public static Expression operator +(Variable variable, double value)
-        => variable + (float)value;
+        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), value);
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -63,7 +54,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> value <paramref name="value"/> as <see cref="Expression.Constant"/>.</returns>
     public static Expression operator +(double value, Variable variable)
-        => variable + (float)value;
+        => variable + value;
 
     /// <summary>
     /// Add <paramref name="term"/> to <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -113,7 +104,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(Variable variable, float value)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), -value);
+        => variable - (double)value;
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -122,7 +113,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(Variable variable, double value)
-        => variable - (float)value;
+        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), -value);
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -131,7 +122,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(float value, Variable variable)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, -1)), value);
+        => (double)value - variable;
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -140,7 +131,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(double value, Variable variable)
-        => (float)value - variable;
+        => new(ImmutableArray<Term>.Empty.Add(new(variable, -1)), value);
 
     /// <summary>
     /// Subtract <paramref name="term"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -188,7 +179,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance.</returns>
     public static Term operator *(Variable variable, float value)
-        => new(variable, value);
+        => variable * (double)value;
 
     /// <summary>
     /// Multiply <paramref name="variable"/> with <paramref name="value"/> and return new <see cref="Term"/>.
@@ -197,7 +188,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance.</returns>
     public static Term operator *(Variable variable, double value)
-        => variable * (float)value;
+        => new(variable, value);
 
     /// <summary>
     /// Multiply <paramref name="variable"/> with <paramref name="value"/> and return new <see cref="Term"/>.
@@ -215,7 +206,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance.</returns>
     public static Term operator *(double value, Variable variable)
-        => variable * (float)value;
+        => variable * value;
 
     #endregion
 
@@ -228,7 +219,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/>.</returns>
     public static Term operator /(Variable variable, float value)
-        => new(variable, 1 / value);
+        => variable / (double)value;
 
     /// <summary>
     /// Divide <paramref name="variable"/> by <paramref name="value"/> and return new <see cref="Term"/>.
@@ -237,7 +228,7 @@ public readonly record struct Variable(ulong Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/>.</returns>
     public static Term operator /(Variable variable, double value)
-        => variable / (float)value;
+        => new(variable, 1 / value);
 
     #endregion
 }

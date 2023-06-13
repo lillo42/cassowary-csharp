@@ -15,7 +15,7 @@ public readonly record struct PartialConstraint(Expression Expression, WeightedR
     /// <param name="value">The strength.</param>
     /// <returns>New <see cref="Constraint"/> instance.</returns>
     public static Constraint operator |(PartialConstraint partial, float value)
-        => new(partial.Expression - value, partial.Relation);
+        => partial | (double)value;
 
     /// <summary>
     /// Create a <see cref="Constraint"/> from a <see cref="PartialConstraint"/> and a value.
@@ -24,7 +24,7 @@ public readonly record struct PartialConstraint(Expression Expression, WeightedR
     /// <param name="value">The strength.</param>
     /// <returns>New <see cref="Constraint"/> instance.</returns>
     public static Constraint operator |(PartialConstraint partial, double value)
-        => partial | (float)value;
+        => new(partial.Expression - value, partial.Relation);
 
     /// <summary>
     /// Create a <see cref="Constraint"/> from a <see cref="PartialConstraint"/> and a value.
@@ -33,7 +33,7 @@ public readonly record struct PartialConstraint(Expression Expression, WeightedR
     /// <param name="value">The strength.</param>
     /// <returns>New <see cref="Constraint"/> instance.</returns>
     public static Constraint operator |(double value, PartialConstraint partial)
-        => partial | (float)value;
+        => partial | value;
 
     /// <summary>
     /// Create a <see cref="Constraint"/> from a <see cref="PartialConstraint"/> and a value.

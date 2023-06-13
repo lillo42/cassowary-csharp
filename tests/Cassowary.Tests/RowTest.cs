@@ -10,10 +10,10 @@ public class RowTest
     [Fact]
     public void Add()
     {
-        var value = _fixture.Create<float>();
+        var value = _fixture.Create<double>();
         var row = new Row(value);
 
-        var add = _fixture.Create<float>();
+        var add = _fixture.Create<double>();
 
         var newValue = row.Add(add);
         newValue.Should().Be(value + add);
@@ -26,7 +26,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const float coefficient = 100f;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
 
         row.Cells.Should().ContainKey(symbol);
@@ -38,7 +38,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const float coefficient = 1E-9f;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
 
         row.Cells.Should().NotContainKey(symbol);
@@ -50,7 +50,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const int coefficient = 100;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
         row.Cells.Should().ContainKey(symbol);
 
@@ -66,7 +66,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const int coefficient = 100;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
         row.Cells.Should().ContainKey(symbol);
 
@@ -78,19 +78,19 @@ public class RowTest
     [Fact]
     public void AddRow_Should_ReturnTrue_When_DiffIsNotZero()
     {
-        var row = new Row(_fixture.Create<float>());
-        var other = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
+        var other = new Row(_fixture.Create<double>());
         other.Add(_fixture.Create<Symbol>(), 100);
 
-        row.Add(other, _fixture.Create<float>()).Should().BeTrue();
+        row.Add(other, _fixture.Create<double>()).Should().BeTrue();
         row.Cells.Should().NotBeEmpty();
     }
     
     [Fact]
     public void AddRow_Should_ReturnFalse_When_DiffIsZero()
     {
-        var row = new Row(_fixture.Create<float>());
-        var other = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
+        var other = new Row(_fixture.Create<double>());
 
         row.Add(other, 0).Should().BeFalse();
     }
@@ -108,7 +108,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const int coefficient = 100;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
 
         row.CoefficientFor(symbol).Should().Be(coefficient);
@@ -117,7 +117,7 @@ public class RowTest
     [Fact]
     public void Remove_Should_DoNothing_When_SymbolIsNotInRow()
     {
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Remove(_fixture.Create<Symbol>());
     }
     
@@ -127,7 +127,7 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const int coefficient = 100;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
         row.Cells.Should().ContainKey(symbol);
 
@@ -138,7 +138,7 @@ public class RowTest
     [Fact]
     public void ReverseSign_Should_ReverseConstant()
     {
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         var symbol = _fixture.Create<Symbol>();
         row.Add(symbol, 100);
         var constant = row.Constant;
@@ -151,7 +151,7 @@ public class RowTest
     [Fact]
     public void SolveForSymbol()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var row = new Row(constant);
         
         var symbol = _fixture.Create<Symbol>();
@@ -161,14 +161,14 @@ public class RowTest
         row.SolveForSymbol(symbol);
         
         row.Cells.Should().NotContainKey(symbol);
-        row.Constant.Should().Be(constant * (-1 / 100f));
+        row.Constant.Should().Be(constant * (-1 / 100d));
         row.Cells.Should().Match(x => x.All(y => y.Value == -2f));
     }
     
     [Fact]
     public void SolveForSymbols()
     {
-        var constant = _fixture.Create<float>();
+        var constant = _fixture.Create<double>();
         var row = new Row(constant);
         
         var symbol1 = _fixture.Create<Symbol>();
@@ -181,13 +181,13 @@ public class RowTest
         
         row.Cells.Should().ContainKey(symbol1);
         row.Cells.Should().NotContainKey(symbol2);
-        row.Constant.Should().Be(constant * (-1 / 200f));
+        row.Constant.Should().Be(constant * (-1 / 200d));
     }
     
     [Fact]
     public void Substitute_Should_DoNothing_When_SymbolIsNotInRow()
     {
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Substitute(_fixture.Create<Symbol>(), _fixture.Create<Row>());
     }
     
@@ -197,11 +197,11 @@ public class RowTest
         var symbol = _fixture.Create<Symbol>();
         const int coefficient = 100;
 
-        var row = new Row(_fixture.Create<float>());
+        var row = new Row(_fixture.Create<double>());
         row.Add(symbol, coefficient);
         row.Cells.Should().ContainKey(symbol);
 
-        var other = new Row(_fixture.Create<float>());
+        var other = new Row(_fixture.Create<double>());
         other.Add(_fixture.Create<Symbol>(), 200);
         row.Substitute(symbol, other);
 

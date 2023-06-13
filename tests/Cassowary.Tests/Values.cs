@@ -2,12 +2,12 @@
 
 namespace Cassowary.Tests;
 
-public record Values(ITestOutputHelper Output, Dictionary<Variable, float> Variables)
+public record Values(ITestOutputHelper Output, Dictionary<Variable, double> Variables)
 {
-    private float ValueOf(Variable variable)
+    private double ValueOf(Variable variable)
         => Variables.GetValueOrDefault(variable, 0);
 
-    private void Update(List<(Variable, float)> changes)
+    private void Update(List<(Variable, double)> changes)
     {
         foreach (var (variable, value) in changes)
         {
@@ -16,12 +16,12 @@ public record Values(ITestOutputHelper Output, Dictionary<Variable, float> Varia
         }
     }
 
-    public static (Func<Variable, float>, Action<List<(Variable, float)>>) NewValues(ITestOutputHelper output)
+    public static (Func<Variable, double>, Action<List<(Variable, double)>>) NewValues(ITestOutputHelper output)
     {
-        var values = new Values(output, new Dictionary<Variable, float>());
+        var values = new Values(output, new Dictionary<Variable, double>());
 
-        var valueOf = new Func<Variable, float>(values.ValueOf);
-        var update = new Action<List<(Variable, float)>>(values.Update);
+        var valueOf = new Func<Variable, double>(values.ValueOf);
+        var update = new Action<List<(Variable, double)>>(values.Update);
 
         return (valueOf, update);
     }
