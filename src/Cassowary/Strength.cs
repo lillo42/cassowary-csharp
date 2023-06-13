@@ -34,29 +34,29 @@ public static class Strength
     /// <summary>
     /// The required strength.
     /// </summary>
-    public const float Required = 1_001_001_000;
+    public const double Required = 1_001_001_000;
 
     /// <summary>
     /// The strong strengths.
     /// </summary>
-    public const float Strong = 1_000_000;
+    public const double Strong = 1_000_000;
 
     /// <summary>
     /// The medium strength.
     /// </summary>
-    public const float Medium = 1_000;
+    public const double Medium = 1_000;
 
     /// <summary>
     /// The weak strength.
     /// </summary>
-    public const float Weak = 1;
+    public const double Weak = 1;
 
     /// <summary>
     /// Clips a strength value to the legal range.
     /// </summary>
     /// <param name="strength">The strength.</param>
     /// <returns>The clip value.</returns>
-    public static float Clip(float strength)
+    public static double Clip(double strength)
         => strength.Min(Required).Max(0);
 
     /// <summary>
@@ -69,7 +69,7 @@ public static class Strength
     /// <param name="c">The weak value.</param>
     /// <param name="w">The multiplied.</param>
     /// <returns></returns>
-    public static float Create(float a, float b, float c, float w) =>
+    public static double Create(double a, double  b, double c, double w) =>
         (a * w).Max(0).Min(1_000) * Strong +
         (b * w).Max(0).Min(1_000) * Medium +
         (c * w).Max(0).Min(1_000);

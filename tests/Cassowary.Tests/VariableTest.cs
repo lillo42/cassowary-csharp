@@ -12,17 +12,17 @@ public class VariableTest
     public void AddWithValue()
     {
         var variable = new Variable();
-        var value = _fixture.Create<float>();
+        var value = _fixture.Create<double>();
 
         var expression = variable + value;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, 1) });
 
-        expression = variable + (double)value;
+        expression = variable + (float)value;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, 1) });
 
-        expression = (double)value + variable;
+        expression = (float)value + variable;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, 1) });
 
@@ -35,7 +35,7 @@ public class VariableTest
     public void AddWithTerm()
     {
         var variable = new Variable();
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
 
         var expression = variable + term;
         expression.Constant.Should().Be(0);
@@ -48,8 +48,8 @@ public class VariableTest
         var variable = new Variable();
         var expression = new Expression(
             ImmutableArray<Term>.Empty
-                .Add(new Term(new Variable(), _fixture.Create<float>())),
-            _fixture.Create<float>()
+                .Add(new Term(new Variable(), _fixture.Create<double>())),
+            _fixture.Create<double>()
         );
 
         var otherExpression = variable + expression;
@@ -82,17 +82,17 @@ public class VariableTest
     public void SubtractWithValue()
     {
         var variable = new Variable();
-        var value = _fixture.Create<float>();
+        var value = _fixture.Create<double>();
 
         var expression = variable - value;
         expression.Constant.Should().Be(-value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, 1) });
 
-        expression = variable - (double)value;
+        expression = variable - (float)value;
         expression.Constant.Should().Be(-value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, 1) });
 
-        expression = (double)value - variable;
+        expression = (float)value - variable;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { new Term(variable, -1) });
 
@@ -106,7 +106,7 @@ public class VariableTest
     public void SubtractWithTerm()
     {
         var variable = new Variable();
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
 
         var expression = variable - term;
         expression.Constant.Should().Be(0);
@@ -120,7 +120,7 @@ public class VariableTest
         var variable = new Variable();
         var expression = new Expression(
             ImmutableArray<Term>.Empty
-                .Add(new Term(new Variable(), _fixture.Create<float>())),
+                .Add(new Term(new Variable(), _fixture.Create<double>())),
             _fixture.Create<float>()
         );
 
@@ -145,17 +145,17 @@ public class VariableTest
     public void MultiplyWithValue()
     {
         var variable = new Variable();
-        var value = _fixture.Create<float>();
+        var value = _fixture.Create<double>();
 
         var term = variable * value;
         term.Coefficient.Should().Be(value);
         term.Variable.Should().Be(variable);
 
-        term = variable * (double)value;
+        term = variable * (float)value;
         term.Coefficient.Should().Be(value);
         term.Variable.Should().Be(variable);
 
-        term = (double)value * variable;
+        term = (float)value * variable;
         term.Coefficient.Should().Be(value);
         term.Variable.Should().Be(variable);
 
@@ -168,13 +168,13 @@ public class VariableTest
     public void DivideWithValue()
     {
         var variable = new Variable();
-        var value = _fixture.Create<float>();
+        var value = _fixture.Create<double>();
 
         var term = variable / value;
         term.Coefficient.Should().Be(1 / value);
         term.Variable.Should().Be(variable);
 
-        term = variable / (double)value;
+        term = variable / (float)value;
         term.Coefficient.Should().Be(1 / value);
         term.Variable.Should().Be(variable);
     }

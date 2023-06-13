@@ -11,7 +11,7 @@ public class ConstraintTest
     public void Properties()
     {
         var relational = _fixture.Create<RelationalOperator>();
-        var strength = _fixture.Create<float>();
+        var strength = _fixture.Create<double>();
         var expression = new Expression();
         var constraint = new Constraint(expression, relational, strength);
         

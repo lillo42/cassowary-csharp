@@ -8,7 +8,7 @@ namespace Cassowary;
 /// </summary>
 /// <param name="Variable">The <see cref="Cassowary.Variable"/>.</param>
 /// <param name="Coefficient">The coefficient.</param>
-public readonly record struct Term(Variable Variable, float Coefficient)
+public readonly record struct Term(Variable Variable, double Coefficient)
 {
     /// <summary>
     /// Create new <see cref="PartialConstraint"/> based on <see cref="Term"/> and <see cref="WeightedRelation"/>.
@@ -28,7 +28,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns> Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>.</returns>
     public static Expression operator +(Term term, float value)
-        => new(ImmutableArray<Term>.Empty.Add(term), value);
+        => term + (double)value;
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>. 
@@ -37,7 +37,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns> Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>.</returns>
     public static Expression operator +(Term term, double value)
-        => term + (float)value;
+        => new(ImmutableArray<Term>.Empty.Add(term), value);
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>. 
@@ -46,7 +46,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns> Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>.</returns>
     public static Expression operator +(float value, Term term)
-        => term + value;
+        => term + (double)value;
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>. 
@@ -55,7 +55,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>.</returns>
     public static Expression operator +(double value, Term term)
-        => term + (float)value;
+        => term + value;
 
     /// <summary>
     /// Add <paramref name="term"/> to <paramref name="other"/> and return new <see cref="Expression"/>.
@@ -69,6 +69,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     #endregion
 
     #region operator -
+
     /// <summary>
     /// Negate <paramref name="term"/> and return new <see cref="Term"/>.
     /// </summary>
@@ -83,7 +84,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
     public static Expression operator -(Term term, float value)
-        => new(ImmutableArray<Term>.Empty.Add(term), -value);
+        => term - (double)value;
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="term"/> and return new <see cref="Expression"/>.
@@ -92,7 +93,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
     public static Expression operator -(Term term, double value)
-        => term - (float)value;
+        => new(ImmutableArray<Term>.Empty.Add(term), -value);
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="term"/> and return new <see cref="Expression"/>.
@@ -100,8 +101,8 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="term">The <see cref="Term"/>.</param>
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
-    public static Expression operator -(float value, Term term) 
-        => new(ImmutableArray<Term>.Empty.Add(-term), value);
+    public static Expression operator -(float value, Term term)
+        => (double)value - term;
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="term"/> and return new <see cref="Expression"/>.
@@ -110,7 +111,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
     public static Expression operator -(double value, Term term)
-        => (float)value - term;
+        => new(ImmutableArray<Term>.Empty.Add(-term), value);
 
     /// <summary>
     /// Subtract <paramref name="term"/> from <paramref name="expression"/> and return new <see cref="Expression"/>.
@@ -123,9 +124,11 @@ public readonly record struct Term(Variable Variable, float Coefficient)
         var negate = -expression;
         return negate with { Terms = negate.Terms.Add(term) };
     }
+
     #endregion
 
     #region operator *
+
     /// <summary>
     /// Multiply <paramref name="term"/> by <paramref name="value"/> and return new <see cref="Term"/>.
     /// </summary>
@@ -133,7 +136,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance with <see cref="Coefficient"/> multiply by <paramref name="value"/>.</returns>
     public static Term operator *(Term term, float value)
-        => term with { Coefficient = term.Coefficient * value };
+        => term * (double)value;
 
     /// <summary>
     /// Multiply <paramref name="term"/> by <paramref name="value"/> and return new <see cref="Term"/>.
@@ -142,7 +145,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance with <see cref="Coefficient"/> multiply by <paramref name="value"/>.</returns>
     public static Term operator *(Term term, double value)
-        => term * (float)value;
+        => term with { Coefficient = term.Coefficient * value };
 
     /// <summary>
     /// Multiply <paramref name="term"/> by <paramref name="value"/> and return new <see cref="Term"/>.
@@ -160,10 +163,12 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance with <see cref="Coefficient"/> multiply by <paramref name="value"/>.</returns>
     public static Term operator *(double value, Term term)
-        => term * (float)value;
+        => term * value;
+
     #endregion
 
     #region operator /
+
     /// <summary>
     /// Divide <paramref name="term"/> by <paramref name="value"/> and return new <see cref="Term"/>.
     /// </summary>
@@ -171,7 +176,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance with <see cref="Coefficient"/> dividing by <paramref name="value"/>.</returns>
     public static Term operator /(Term term, float value)
-        => term with { Coefficient = term.Coefficient / value };
+        => term / (double)value;
 
     /// <summary>
     /// Divide <paramref name="term"/> by <paramref name="value"/> and return new <see cref="Term"/>.
@@ -180,6 +185,7 @@ public readonly record struct Term(Variable Variable, float Coefficient)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Term"/> instance with <see cref="Coefficient"/> dividing by <paramref name="value"/>.</returns>
     public static Term operator /(Term term, double value)
-        => term / (float)value;
+        => term with { Coefficient = term.Coefficient / value };
+
     #endregion
 }

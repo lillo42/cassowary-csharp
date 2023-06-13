@@ -9,7 +9,7 @@ public class StrengthTest
     [InlineData(1, 1)]
     [InlineData(-1, 0)]
     [InlineData(Strength.Required + 1, Strength.Required)]
-    public void Clip(float strength, float expected)
+    public void Clip(double strength, double expected)
     {
         var result = Strength.Clip(strength);
         result.Should().Be(expected);
@@ -22,7 +22,7 @@ public class StrengthTest
     [InlineData(-1, -1, 1, 1, 1)]
     [InlineData(-1, -1, -1, 1, 0)]
     [InlineData(-1, -1, -1, -1, 1_001_001)]
-    public void Create(float a, float b, float c, float w, float expected)
+    public void Create(double a, double b, double c, double w, double expected)
     {
         var result = Strength.Create(a, b, c, w);
         result.Should().Be(expected);

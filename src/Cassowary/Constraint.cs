@@ -25,7 +25,7 @@ public readonly record struct Constraint
     /// <param name="expression">The <see cref="Cassowary.Expression"/>.</param>
     /// <param name="relationalOperator">The <see cref="RelationalOperator"/>.</param>
     /// <param name="strength">The strength.</param>
-    public Constraint(Expression expression, RelationalOperator relationalOperator, float strength)
+    public Constraint(Expression expression, RelationalOperator relationalOperator, double strength)
     {
         _data = new ConstraintData(expression, strength, relationalOperator);
     }
@@ -43,5 +43,5 @@ public readonly record struct Constraint
     /// <summary>
     /// The strength of the constraint that the solver will use.
     /// </summary>
-    public float Strength => _data.Strength;
+    public double Strength => _data.Strength;
 }

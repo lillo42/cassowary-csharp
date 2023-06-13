@@ -11,7 +11,7 @@ public class TermTest
     [Fact]
     public void Or()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
         var relation = _fixture.Create<WeightedRelation>();
 
         var partialConstraint = term | relation;
@@ -23,18 +23,18 @@ public class TermTest
     [Fact]
     public void AddWithValue()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
-        var value = _fixture.Create<float>();
+        var term = new Term(new Variable(), _fixture.Create<double>());
+        var value = _fixture.Create<double>();
 
         var expression = term + value;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { term });
 
-        expression = term + (double)value;
+        expression = term + (float)value;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { term });
 
-        expression = (double)value + term;
+        expression = (float)value + term;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { term });
 
@@ -46,8 +46,8 @@ public class TermTest
     [Fact]
     public void AddWithTerm()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
-        var otherTerm = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
+        var otherTerm = new Term(new Variable(), _fixture.Create<double>());
 
         var expression = term + otherTerm;
         expression.Constant.Should().Be(0);
@@ -57,7 +57,7 @@ public class TermTest
     [Fact]
     public void Negate()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
         var negate = -term;
         negate.Coefficient.Should().Be(-term.Coefficient);
     }
@@ -65,18 +65,18 @@ public class TermTest
     [Fact]
     public void SubWithValue()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
-        var value = _fixture.Create<float>();
+        var term = new Term(new Variable(), _fixture.Create<double>());
+        var value = _fixture.Create<double>();
 
         var expression = term - value;
         expression.Constant.Should().Be(-value);
         expression.Terms.Should().BeEquivalentTo(new[] { term });
 
-        expression = term - (double)value;
+        expression = term - (float)value;
         expression.Constant.Should().Be(-value);
         expression.Terms.Should().BeEquivalentTo(new[] { term });
 
-        expression = (double)value - term;
+        expression = (float)value - term;
         expression.Constant.Should().Be(value);
         expression.Terms.Should().BeEquivalentTo(new[] { -term });
 
@@ -88,10 +88,10 @@ public class TermTest
     [Fact]
     public void SubWithExpression()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
+        var term = new Term(new Variable(), _fixture.Create<double>());
         var expression = new Expression(
-            ImmutableArray<Term>.Empty.Add(new Term(new Variable(), _fixture.Create<float>())),
-            _fixture.Create<float>());
+            ImmutableArray<Term>.Empty.Add(new Term(new Variable(), _fixture.Create<double>())),
+            _fixture.Create<double>());
 
         var negate = -expression;
 
@@ -103,16 +103,16 @@ public class TermTest
     [Fact]
     public void MultiplyWithValue()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
-        var value = _fixture.Create<float>();
+        var term = new Term(new Variable(), _fixture.Create<double>());
+        var value = _fixture.Create<double>();
 
         var otherTerm = term * value;
         otherTerm.Coefficient.Should().Be(term.Coefficient * value);
 
-        otherTerm = term * (double)value;
+        otherTerm = term * (float)value;
         otherTerm.Coefficient.Should().Be(term.Coefficient * value);
 
-        otherTerm = (double)value * term;
+        otherTerm = (float)value * term;
         otherTerm.Coefficient.Should().Be(term.Coefficient * value);
 
         otherTerm = value * term;
@@ -122,13 +122,13 @@ public class TermTest
     [Fact]
     public void DividingWithValue()
     {
-        var term = new Term(new Variable(), _fixture.Create<float>());
-        var value = _fixture.Create<float>();
+        var term = new Term(new Variable(), _fixture.Create<double>());
+        var value = _fixture.Create<double>();
 
         var otherTerm = term / value;
         otherTerm.Coefficient.Should().Be(term.Coefficient / value);
         
-        otherTerm = term / (double)value;
+        otherTerm = term / (float)value;
         otherTerm.Coefficient.Should().Be(term.Coefficient / value);
     }
 }

@@ -8,9 +8,9 @@ namespace Cassowary;
 public class Solver
 {
     private readonly Dictionary<Constraint, Tag> _cns;
-    private readonly Dictionary<Variable, (float, Symbol, float)> _varData;
+    private readonly Dictionary<Variable, (double, Symbol, double)> _varData;
     private readonly Dictionary<Symbol, Variable> _varForSymbol;
-    private readonly List<(Variable, float)> _publicChanges;
+    private readonly List<(Variable, double)> _publicChanges;
     private readonly HashSet<Variable> _changed;
     private readonly Dictionary<Symbol, Row> _rows;
     private readonly Dictionary<Variable, EditInfo> _edits;
@@ -209,7 +209,7 @@ public class Solver
     /// This method should be called before the `suggest_value` method is
     /// used to supply a suggested value for the given edit variable.
     /// </remarks>
-    public void AddEditVariable(Variable variable, float strength)
+    public void AddEditVariable(Variable variable, double strength)
     {
         if (_edits.ContainsKey(variable))
         {
@@ -314,7 +314,7 @@ public class Solver
     /// The list of changes returned is not in a specific order. Each change comprises the variable changed and
     /// the new value of that variable.
     /// </remarks>
-    public List<(Variable, float)> FetchChanges()
+    public List<(Variable, double)> FetchChanges()
     {
         if (_shouldClearChanges)
         {
@@ -331,7 +331,7 @@ public class Solver
         {
             if (_varData.TryGetValue(variable, out var data))
             {
-                var newValue = 0f;
+                var newValue = 0d;
                 if (_rows.TryGetValue(data.Item2, out var row))
                 {
                     newValue = row.Constant;
@@ -397,7 +397,7 @@ public class Solver
     /// </summary>
     /// <param name="marker"></param>
     /// <param name="strength"></param>
-    private void RemoveMarkerEffects(Symbol marker, float strength)
+    private void RemoveMarkerEffects(Symbol marker, double strength)
     {
         if (_rows.TryGetValue(marker, out var row))
         {
@@ -418,8 +418,8 @@ public class Solver
         // Create and add the artificial variable to the tableau
         var art = new Symbol(_idTick, SymbolType.Slack);
         _idTick++;
-        _rows.Add(art, row with { Cells = new Dictionary<Symbol, float>(row.Cells) });
-        _artificial = row with { Cells = new Dictionary<Symbol, float>(row.Cells) };
+        _rows.Add(art, row with { Cells = new Dictionary<Symbol, double>(row.Cells) });
+        _artificial = row with { Cells = new Dictionary<Symbol, double>(row.Cells) };
 
         // Optimize the artificial objective. This is successful
         // only if the artificial objective is optimized to zero.
@@ -549,7 +549,7 @@ public class Solver
     /// </remarks>
     private (Symbol symbol, Row row)? GetLeavingRow(Symbol entering)
     {
-        var ratio = float.PositiveInfinity;
+        var ratio = double.PositiveInfinity;
         Symbol? found = null;
 
         foreach (var (symbol, row) in _rows)
@@ -774,7 +774,7 @@ public class Solver
     /// </remarks>
     private (Symbol, Row)? GetMarkerLeavingRow(Symbol marker)
     {
-        var r1 = float.PositiveInfinity;
+        var r1 = double.PositiveInfinity;
         var r2 = r1;
         Symbol? first = null;
         Symbol? second = null;
@@ -856,7 +856,7 @@ public class Solver
     private Symbol GetDualEnteringSymbol(Row row)
     {
         var entering = Symbol.Invalid;
-        var ratio = float.PositiveInfinity;
+        var ratio = double.PositiveInfinity;
         var objective = _objective;
 
         foreach (var (symbol, value) in row.Cells)

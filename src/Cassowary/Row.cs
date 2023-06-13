@@ -2,22 +2,22 @@
 
 namespace Cassowary;
 
-internal record Row(Dictionary<Symbol, float> Cells, float Constant) 
+internal record Row(Dictionary<Symbol, double> Cells, double Constant) 
 {
-    public Row(float constant)
+    public Row(double constant)
         : this(new(), constant)
     {
     }
 
-    public float Constant { get; private set; } = Constant;
+    public double Constant { get; private set; } = Constant;
 
-    public float Add(float value)
+    public double Add(double value)
     {
         Constant += value;
         return Constant;
     }
 
-    public void Add(Symbol symbol, float coefficient)
+    public void Add(Symbol symbol, double coefficient)
     {
         if (Cells.TryGetValue(symbol, out var entry))
         {
@@ -34,7 +34,7 @@ internal record Row(Dictionary<Symbol, float> Cells, float Constant)
         }
     }
 
-    public bool Add(Row other, float coefficient)
+    public bool Add(Row other, double coefficient)
     {
         var diff = other.Constant * coefficient;
         Constant += diff;
@@ -76,7 +76,7 @@ internal record Row(Dictionary<Symbol, float> Cells, float Constant)
         SolveForSymbol(rhs);
     }
 
-    public float CoefficientFor(Symbol symbol) => Cells.GetValueOrDefault(symbol);
+    public double CoefficientFor(Symbol symbol) => Cells.GetValueOrDefault(symbol);
 
     public bool Substitute(Symbol symbol, Row row)
     {

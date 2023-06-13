@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using static Cassowary.Strength;
 using static Cassowary.WeightedRelation;
 
@@ -7,7 +6,6 @@ namespace Cassowary.Tests;
 
 public class SolverTest
 {
-    private readonly Fixture _fixture = new();
     private readonly Solver _solver = new();
 
     [Fact]

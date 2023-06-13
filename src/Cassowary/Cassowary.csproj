@@ -5,7 +5,15 @@
     <PackageId>Cassowary.CSharp</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
+    <PackageTags>cassowary cassowary-algorithm constraint-solver linear-programming layout csharp</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Title>Cassowary</Title>
+    <Description>Implementation of the Cassowary algorithm in C#</Description>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub">
