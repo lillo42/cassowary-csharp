@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Cassowary.Extensions;
 
 namespace Cassowary;
 
@@ -83,7 +82,7 @@ public readonly struct Expression
     /// </summary>
     /// <param name="term">The <see cref="Term"/>.</param>
     /// <returns>New instance of <see cref="Expression"/>.</returns>
-    public static Expression From(Term term) => new(ImmutableArray<Term>.Empty.Add(term), 0);
+    public static Expression From(Term term) => new(ImmutableArray.Create(term), 0);
 
     /// <summary>
     /// Constructs an expression from a single variable. Forms an expression of the form _x_
@@ -149,7 +148,7 @@ public readonly struct Expression
     /// <param name="expression">The <see cref="Expression"/>.</param>
     /// <returns>New instance of <see cref="Expression"/> with negative <see cref="Cassowary.Term"/> and constant.</returns>
     public static Expression operator -(Expression expression)
-        => new(expression.Terms.ToImmutableArray(term => -term), -expression.Constant);
+        => new(ImmutableArray.CreateRange(expression.Terms, term => -term), -expression.Constant);
 
     /// <summary>
     /// Subtract <see cref="float"/> value from <see cref="Expression"/>.
@@ -253,7 +252,7 @@ public readonly struct Expression
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(Expression expression, double value)
-         => new(expression.Terms.ToImmutableArray(x => x * value),
+         => new(ImmutableArray.CreateRange(expression.Terms, x => x * value),
             expression.Constant * value);
 
     /// <summary>
@@ -294,7 +293,7 @@ public readonly struct Expression
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> dividing by <paramref name="value"/>.</returns>
     public static Expression operator /(Expression expression, double value)
-        => new(expression.Terms.ToImmutableArray(term => term / value), expression.Constant / value);
+        => new(ImmutableArray.CreateRange(expression.Terms, term => term / value), expression.Constant / value);
 
     #endregion
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using AutoFixture;
-using Cassowary.Extensions;
 using FluentAssertions;
 
 namespace Cassowary.Tests;
@@ -94,7 +93,7 @@ public class ExpressionTest
 
         var negated = -expression;
         negated.Constant.Should().Be(-expression.Constant);
-        negated.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => -term));
+        negated.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => -term));
     }
 
     [Fact]
@@ -156,7 +155,7 @@ public class ExpressionTest
         var sub = expression - otherExpression;
         sub.Constant.Should().Be(expression.Constant - otherExpression.Constant);
         sub.Terms.Should()
-            .BeEquivalentTo(expression.Terms.AddRange(otherExpression.Terms.ToImmutableArray(term => -term)));
+            .BeEquivalentTo(expression.Terms.AddRange(ImmutableArray.CreateRange(otherExpression.Terms, term => -term)));
     }
 
     [Fact]
@@ -180,19 +179,19 @@ public class ExpressionTest
 
         var product = expression * multiplier;
         product.Constant.Should().Be(expression.Constant * multiplier);
-        product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
+        product.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term * multiplier));
 
         product = expression * (float)multiplier;
         product.Constant.Should().Be(expression.Constant * multiplier);
-        product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
+        product.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term * multiplier));
 
         product = multiplier * expression;
         product.Constant.Should().Be(expression.Constant * multiplier);
-        product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
+        product.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term * multiplier));
 
         product = (float)multiplier * expression;
         product.Constant.Should().Be(expression.Constant * multiplier);
-        product.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term * multiplier));
+        product.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term * multiplier));
     }
 
     [Fact]
@@ -205,10 +204,10 @@ public class ExpressionTest
 
         var remaning = expression / divider;
         remaning.Constant.Should().Be(expression.Constant / divider);
-        remaning.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term / divider));
+        remaning.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term / divider));
 
         remaning = expression / (double)divider;
         remaning.Constant.Should().Be(expression.Constant / divider);
-        remaning.Terms.Should().BeEquivalentTo(expression.Terms.ToImmutableArray(term => term / divider));
+        remaning.Terms.Should().BeEquivalentTo(ImmutableArray.CreateRange(expression.Terms, term => term / divider));
     }
 }
