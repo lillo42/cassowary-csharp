@@ -7,8 +7,69 @@ namespace Cassowary;
 /// An expression that can be the left hand or right hand side of a constraint equation.
 /// It is a linear combination of variables, i.e. a sum of variables weighted by coefficients, plus an optional constant.
 /// </summary>
-public readonly record struct Expression(ImmutableArray<Term> Terms, double Constant)
+public readonly struct Expression
 {
+    /// <summary>
+    /// Gets the terms of the expression.
+    /// </summary>
+    public ImmutableArray<Term> Terms { get; init; }
+
+    /// <summary>
+    /// Gets the constant value of the expression.
+    /// </summary>
+    public double Constant { get; init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Expression"/> struct.
+    /// </summary>
+    /// <param name="terms">Terms of the expression.</param>
+    /// <param name="constant">Constant value.</param>
+    public Expression(ImmutableArray<Term> terms, double constant)
+    {
+        Terms = terms;
+        Constant = constant;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Expression"/> struct.
+    /// </summary>
+    public Expression()
+    {
+        Terms = ImmutableArray<Term>.Empty;
+    }
+    
+    /// <summary>
+    /// Deconstructs the expression into terms and constant.
+    /// </summary>
+    /// <param name="terms"></param>
+    /// <param name="constant"></param>
+    public void Deconstruct(out ImmutableArray<Term> terms, out double constant)
+    {
+        terms = this.Terms;
+        constant = this.Constant;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        var other = (Expression)obj;
+        return other.Constant == Constant && Terms.SequenceEqual(other.Terms);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return Constant.GetHashCode() + Terms.Aggregate(19, (h, i) => (h * 19) + i.GetHashCode());
+        }
+    }
+
     /// <summary>
     /// Constructs an expression of the form _n_, where n is a constant real number, not a variable.
     /// </summary>
@@ -234,6 +295,26 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, double Cons
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> dividing by <paramref name="value"/>.</returns>
     public static Expression operator /(Expression expression, double value)
         => new(expression.Terms.ToImmutableArray(term => term / value), expression.Constant / value);
+
+    #endregion
+
+    #region operator =
+
+    /// <summary>
+    /// Checks if two <see cref="Expression"/> are equal.
+    /// </summary>
+    /// <param name="left">Left <see cref="Expression"/>.</param>
+    /// <param name="right">Right <see cref="Expression"/>.</param>
+    public static bool operator ==(Expression left, Expression right)
+        => left.Equals(right);
+
+    /// <summary>
+    /// Checks if two <see cref="Expression"/> are not equal.
+    /// </summary>
+    /// <param name="left">Left <see cref="Expression"/>.</param>
+    /// <param name="right">Right <see cref="Expression"/>.</param>
+    public static bool operator !=(Expression left, Expression right)
+        => !left.Equals(right);
 
     #endregion
 }

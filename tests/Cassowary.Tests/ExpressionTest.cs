@@ -8,6 +8,15 @@ namespace Cassowary.Tests;
 public class ExpressionTest
 {
     private readonly Fixture _fixture = new();
+    
+    [Fact]
+    public void ExpressionEqualsExpression()
+    {
+        var guid = Guid.NewGuid();
+        var variable = new Variable(guid);
+        (variable | WeightedRelation.Eq(1) | 5)
+            .Should().Be(variable | WeightedRelation.Eq(1) | 5);
+    }
 
     [Fact]
     public void FromConstant()
