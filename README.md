@@ -33,4 +33,4 @@ dotnet add package cassowary-csharp
 
 ## License
 
-Cassowary is licensed under the [MIT](LICENSE) license.
+Cassowary is licensed under the [GNU GENERAL PUBLIC LICENSE](LICENSE) license.
