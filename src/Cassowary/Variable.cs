@@ -45,7 +45,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> value <paramref name="value"/> as <see cref="Expression.Constant"/>.</returns>
     public static Expression operator +(Variable variable, double value)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), value);
+        => new(ImmutableArray.Create(new Term(variable, 1)), value);
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -63,8 +63,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="term">The <see cref="Term"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and <paramref name="term"/> and <see cref="Expression.Constant"/> as 0.</returns>
     public static Expression operator +(Variable variable, Term term)
-        => new(ImmutableArray<Term>.Empty
-            .AddRange(term, new(variable, 1)), 0);
+        => new(ImmutableArray.Create(term, new(variable, 1)), 0);
 
     /// <summary>
     /// Add <paramref name="expression"/> to <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -82,8 +81,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="other">The <see cref="Variable"/>.</param>
     /// <returns>New <see cref="Expression"/> instance with both variables and constant as 0.</returns>
     public static Expression operator +(Variable variable, Variable other)
-        => new(ImmutableArray<Term>.Empty
-            .AddRange(new Term(variable, 1), new Term(other, 1)), 0);
+        => new(ImmutableArray.Create(new Term(variable, 1), new Term(other, 1)), 0);
 
     #endregion
 
@@ -113,7 +111,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(Variable variable, double value)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, 1)), -value);
+        => new(ImmutableArray.Create(new Term(variable, 1)), -value);
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -131,7 +129,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="value">The value.</param>
     /// <returns>New <see cref="Expression"/> instance with <paramref name="variable"/> and negate <paramref name="value"/> as <see cref="Expression.Constant"/> .</returns>
     public static Expression operator -(double value, Variable variable)
-        => new(ImmutableArray<Term>.Empty.Add(new(variable, -1)), value);
+        => new(ImmutableArray.Create(new Term(variable, -1)), value);
 
     /// <summary>
     /// Subtract <paramref name="term"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
@@ -140,8 +138,7 @@ public readonly record struct Variable(Guid Id)
     /// <param name="term">The <see cref="Term"/>.</param>
     /// <returns>New <see cref="Expression"/> instance.</returns>
     public static Expression operator -(Variable variable, Term term)
-        => new(ImmutableArray<Term>.Empty
-            .AddRange(new Term(variable, 1), -term), 0);
+        => new(ImmutableArray.Create(new Term(variable, 1), -term), 0);
 
     /// <summary>
     /// Subtract <paramref name="expression"/> from <paramref name="variable"/> and return new <see cref="Expression"/>.
