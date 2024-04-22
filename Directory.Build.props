@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <AppTargetFramework Condition="$(AppTargetFramework) == ''">net7.0</AppTargetFramework>
+    <AppTargetFramework Condition="$(AppTargetFramework) == ''">net8.0</AppTargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
@@ -18,7 +18,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
