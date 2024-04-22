@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Cassowary.Extensions;
 
 namespace Cassowary;
 
@@ -7,8 +6,69 @@ namespace Cassowary;
 /// An expression that can be the left hand or right hand side of a constraint equation.
 /// It is a linear combination of variables, i.e. a sum of variables weighted by coefficients, plus an optional constant.
 /// </summary>
-public readonly record struct Expression(ImmutableArray<Term> Terms, double Constant)
+public readonly struct Expression
 {
+    /// <summary>
+    /// Gets the terms of the expression.
+    /// </summary>
+    public ImmutableArray<Term> Terms { get; init; }
+
+    /// <summary>
+    /// Gets the constant value of the expression.
+    /// </summary>
+    public double Constant { get; init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Expression"/> struct.
+    /// </summary>
+    /// <param name="terms">Terms of the expression.</param>
+    /// <param name="constant">Constant value.</param>
+    public Expression(ImmutableArray<Term> terms, double constant)
+    {
+        Terms = terms;
+        Constant = constant;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Expression"/> struct.
+    /// </summary>
+    public Expression()
+    {
+        Terms = ImmutableArray<Term>.Empty;
+    }
+    
+    /// <summary>
+    /// Deconstructs the expression into terms and constant.
+    /// </summary>
+    /// <param name="terms"></param>
+    /// <param name="constant"></param>
+    public void Deconstruct(out ImmutableArray<Term> terms, out double constant)
+    {
+        terms = this.Terms;
+        constant = this.Constant;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        var other = (Expression)obj;
+        return other.Constant == Constant && Terms.SequenceEqual(other.Terms);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return Constant.GetHashCode() + Terms.Aggregate(19, (h, i) => (h * 19) + i.GetHashCode());
+        }
+    }
+
     /// <summary>
     /// Constructs an expression of the form _n_, where n is a constant real number, not a variable.
     /// </summary>
@@ -22,7 +82,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, double Cons
     /// </summary>
     /// <param name="term">The <see cref="Term"/>.</param>
     /// <returns>New instance of <see cref="Expression"/>.</returns>
-    public static Expression From(Term term) => new(ImmutableArray<Term>.Empty.Add(term), 0);
+    public static Expression From(Term term) => new(ImmutableArray.Create(term), 0);
 
     /// <summary>
     /// Constructs an expression from a single variable. Forms an expression of the form _x_
@@ -88,7 +148,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, double Cons
     /// <param name="expression">The <see cref="Expression"/>.</param>
     /// <returns>New instance of <see cref="Expression"/> with negative <see cref="Cassowary.Term"/> and constant.</returns>
     public static Expression operator -(Expression expression)
-        => new(expression.Terms.ToImmutableArray(term => -term), -expression.Constant);
+        => new(ImmutableArray.CreateRange(expression.Terms, term => -term), -expression.Constant);
 
     /// <summary>
     /// Subtract <see cref="float"/> value from <see cref="Expression"/>.
@@ -192,7 +252,7 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, double Cons
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> multiply by <paramref name="value"/>.</returns>
     public static Expression operator *(Expression expression, double value)
-         => new(expression.Terms.ToImmutableArray(x => x * value),
+         => new(ImmutableArray.CreateRange(expression.Terms, x => x * value),
             expression.Constant * value);
 
     /// <summary>
@@ -233,7 +293,27 @@ public readonly record struct Expression(ImmutableArray<Term> Terms, double Cons
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> instance with <see cref="Term"/> and <see cref="Constant"/> dividing by <paramref name="value"/>.</returns>
     public static Expression operator /(Expression expression, double value)
-        => new(expression.Terms.ToImmutableArray(term => term / value), expression.Constant / value);
+        => new(ImmutableArray.CreateRange(expression.Terms, term => term / value), expression.Constant / value);
+
+    #endregion
+
+    #region operator =
+
+    /// <summary>
+    /// Checks if two <see cref="Expression"/> are equal.
+    /// </summary>
+    /// <param name="left">Left <see cref="Expression"/>.</param>
+    /// <param name="right">Right <see cref="Expression"/>.</param>
+    public static bool operator ==(Expression left, Expression right)
+        => left.Equals(right);
+
+    /// <summary>
+    /// Checks if two <see cref="Expression"/> are not equal.
+    /// </summary>
+    /// <param name="left">Left <see cref="Expression"/>.</param>
+    /// <param name="right">Right <see cref="Expression"/>.</param>
+    public static bool operator !=(Expression left, Expression right)
+        => !left.Equals(right);
 
     #endregion
 }

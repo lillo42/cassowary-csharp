@@ -8,6 +8,13 @@ public class TermTest
 {
     private readonly Fixture _fixture = new();
 
+    [Fact(DisplayName = "Term equals term")]
+    public void TermEqualsTerm()
+    {
+        var guid = Guid.NewGuid();
+        new Term(new Variable(guid), 0.5).Should().Be(new Term(new Variable(guid), 0.5));
+    }
+
     [Fact]
     public void Or()
     {

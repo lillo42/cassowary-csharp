@@ -37,7 +37,7 @@ public readonly record struct Term(Variable Variable, double Coefficient)
     /// <param name="value">The value.</param>
     /// <returns> Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>.</returns>
     public static Expression operator +(Term term, double value)
-        => new(ImmutableArray<Term>.Empty.Add(term), value);
+        => new(ImmutableArray.Create(term), value);
 
     /// <summary>
     /// Add <paramref name="value"/> to <paramref name="term"/> and return new <see cref="Expression"/>. 
@@ -64,7 +64,7 @@ public readonly record struct Term(Variable Variable, double Coefficient)
     /// <param name="other">The <see cref="Term"/>.</param>
     /// <returns>Create new instance of <see cref="Expression"/> with both <see cref="Term"/>.</returns>
     public static Expression operator +(Term term, Term other)
-        => new(ImmutableArray<Term>.Empty.AddRange(term, other), 0);
+        => new(ImmutableArray.Create(term, other), 0);
 
     #endregion
 
@@ -93,7 +93,7 @@ public readonly record struct Term(Variable Variable, double Coefficient)
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
     public static Expression operator -(Term term, double value)
-        => new(ImmutableArray<Term>.Empty.Add(term), -value);
+        => new(ImmutableArray.Create(term), -value);
 
     /// <summary>
     /// Subtract <paramref name="value"/> from <paramref name="term"/> and return new <see cref="Expression"/>.
@@ -111,7 +111,7 @@ public readonly record struct Term(Variable Variable, double Coefficient)
     /// <param name="value">The value</param>
     /// <returns>New <see cref="Expression"/> with the <paramref name="term"/> and negate <paramref name="value"/>.</returns>
     public static Expression operator -(double value, Term term)
-        => new(ImmutableArray<Term>.Empty.Add(-term), value);
+        => new(ImmutableArray.Create(-term), value);
 
     /// <summary>
     /// Subtract <paramref name="term"/> from <paramref name="expression"/> and return new <see cref="Expression"/>.

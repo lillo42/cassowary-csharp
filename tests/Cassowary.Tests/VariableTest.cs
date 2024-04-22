@@ -7,6 +7,13 @@ namespace Cassowary.Tests;
 public class VariableTest
 {
     private readonly Fixture _fixture = new();
+    
+    [Fact]
+    public void VariableEqualsVariable()
+    {
+        var guid = Guid.NewGuid();
+        new Variable(guid).Should().Be(new Variable(guid));
+    }
 
     [Fact]
     public void AddWithValue()
